@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background P shape with blue gradient matching app theme -->
+  <defs>
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#38BDF8;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0EA5E9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0284C7;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background P shape -->
+  <path
+    fill="url(#blueGradient)"
+    d="M160 96h132c69 0 124 55 124 124s-55 124-124 124h-84v72h-48V96z"
+  />
+  
+  <!-- Arrow (shaft) -->
+  <polygon
+    fill="#FFFFFF"
+    points="184,360 224,320 320,224 320,260 360,220 360,152 292,152 252,192 288,192 192,288 152,328"
+  />
+</svg>

@@ -1,0 +1,141 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { v4 as uuidv4 } from 'uuid';
+import { processDocument, chunkText, saveUploadedFile } from '@/lib/file-processor';
+import { adminDB } from '@/lib/instantdb-admin';
+
+export async function POST(request: NextRequest) {
+  try {
+    const formData = await request.formData();
+    const file = formData.get('file') as File;
+    const companyId = formData.get('companyId') as string;
+    const userId = formData.get('userId') as string;
+    const type = formData.get('type') as 'model_rfp' | 'company_data' | 'tender_document';
+
+    if (!file || !companyId || !userId || !type) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // Save file to disk
+    const filePath = await saveUploadedFile(file, companyId);
+
+    // Create document record
+    const documentId = uuidv4();
+    await adminDB.transact([
+      adminDB.tx.documents[documentId].update({
+        companyId,
+        type,
+        fileName: file.name,
+        filePath,
+        mimeType: file.type,
+        uploadedByUserId: userId,
+        uploadedAt: Date.now(),
+        textExtracted: '',
+        metadata: JSON.stringify({}),
+        hasTables: false,
+        status: 'uploaded',
+      }),
+    ]);
+
+    // Process document in background
+    processDocumentAsync(documentId, filePath, file.type, companyId, type);
+
+    return NextResponse.json({
+      documentId,
+      message: 'Document uploaded successfully',
+    });
+  } catch (error: any) {
+    console.error('Upload error:', error);
+    return NextResponse.json({ error: error.message || 'Upload failed' }, { status: 500 });
+  }
+}
+
+async function processDocumentAsync(
+  documentId: string,
+  filePath: string,
+  mimeType: string,
+  companyId: string,
+  type: string
+) {
+  try {
+    // Process document
+    const processed = await processDocument(filePath, mimeType);
+
+    // Detect language from extracted text
+    let detectedLanguage = 'en';
+    if (processed.textExtracted.length > 100) {
+      try {
+        const langResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/ai/detect-language`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: processed.textExtracted.substring(0, 1000) }),
+        });
+        const langData = await langResponse.json();
+        detectedLanguage = langData.language || 'en';
+      } catch (e) {
+        console.log('Language detection failed, defaulting to English');
+      }
+    }
+
+    // Update document with extracted text and detected language
+    await adminDB.transact([
+      adminDB.tx.documents[documentId].update({
+        textExtracted: processed.textExtracted,
+        metadata: JSON.stringify(processed.metadata),
+        hasTables: processed.hasTables,
+        detectedLanguage,
+        status: 'processed',
+      }),
+    ]);
+
+    // Create chunks and generate embeddings
+    const chunks = chunkText(processed.textExtracted, 500);
+    
+    for (let i = 0; i < chunks.length; i++) {
+      const chunkId = uuidv4();
+      
+      // Generate embedding
+      const embedding = await generateEmbedding(chunks[i]);
+      
+      await adminDB.transact([
+        adminDB.tx.documentChunks[chunkId].update({
+          documentId,
+          companyId,
+          type: type as any,
+          content: chunks[i],
+          section: processed.metadata.sections?.[0] || 'General',
+          orderIndex: i,
+          embedding: JSON.stringify(embedding),
+          createdAt: Date.now(),
+        }),
+      ]);
+    }
+  } catch (error) {
+    console.error('Document processing error:', error);
+    await adminDB.transact([
+      adminDB.tx.documents[documentId].update({
+        status: 'error',
+      }),
+    ]);
+  }
+}
+
+async function generateEmbedding(text: string): Promise<number[]> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/ai/embed`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to generate embedding');
+    }
+
+    const data = await response.json();
+    return data.embedding;
+  } catch (error) {
+    console.error('Embedding error:', error);
+    return [];
+  }
+}
+
