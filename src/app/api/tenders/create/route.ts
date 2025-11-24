@@ -5,7 +5,17 @@ import { adminDB } from '@/lib/instantdb-admin';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { companyId, title, clientName, tenderCode, country, deadline, relatedDocumentIds } = body;
+    const { 
+      companyId, 
+      title, 
+      clientName, 
+      tenderCode, 
+      country, 
+      deadline, 
+      relatedDocumentIds, // Tender documents from government
+      companyDocumentIds, // Company data documents
+      rfpSampleIds // RFP proposal samples
+    } = body;
 
     if (!companyId || !title || !clientName) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -19,12 +29,19 @@ export async function POST(request: NextRequest) {
         clientName,
         tenderCode: tenderCode || '',
         country: country || '',
-        relatedDocumentIds: JSON.stringify(relatedDocumentIds || []),
+        relatedDocumentIds: JSON.stringify(relatedDocumentIds || []), // Tender documents
+        companyDocumentIds: JSON.stringify(companyDocumentIds || []), // Company data
+        rfpSampleIds: JSON.stringify(rfpSampleIds || []), // RFP samples
         parsedRequirements: JSON.stringify({}),
         deadline: deadline || Date.now() + 30 * 24 * 60 * 60 * 1000,
         createdAt: Date.now(),
       }),
     ]);
+
+    console.log(`✅ Created tender ${tenderId} with:`);
+    console.log(`   - Tender Documents: ${(relatedDocumentIds || []).length}`);
+    console.log(`   - Company Documents: ${(companyDocumentIds || []).length}`);
+    console.log(`   - RFP Samples: ${(rfpSampleIds || []).length}`);
 
     return NextResponse.json({
       tenderId,

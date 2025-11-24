@@ -321,7 +321,9 @@ export default function TenderDetailPage() {
 }
 
 function LinkedDocuments({ tenderId }: { tenderId: string }) {
-  const [documents, setDocuments] = useState<any[]>([]);
+  const [tenderDocuments, setTenderDocuments] = useState<any[]>([]);
+  const [companyDocuments, setCompanyDocuments] = useState<any[]>([]);
+  const [rfpSamples, setRfpSamples] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -337,27 +339,63 @@ function LinkedDocuments({ tenderId }: { tenderId: string }) {
       const tenderData = await tenderResponse.json();
       const tender = tenderData.tenders?.find((t: any) => t.id === tenderId);
       
-      if (tender && tender.relatedDocumentIds) {
-        const documentIds = JSON.parse(tender.relatedDocumentIds);
+      if (tender) {
+        // Get all documents
+        const docsResponse = await fetch(`/api/documents/list?companyId=${companyId}`);
+        const docsData = await docsResponse.json();
+        const allDocs = docsData.documents || [];
         
-        if (documentIds.length > 0) {
-          // Get all documents
-          const docsResponse = await fetch(`/api/documents/list?companyId=${companyId}`);
-          const docsData = await docsResponse.json();
-          
-          // Filter to only linked documents
-          const linkedDocs = docsData.documents?.filter((doc: any) => 
-            documentIds.includes(doc.id)
-          ) || [];
-          
-          setDocuments(linkedDocs);
-        }
+        // Load tender documents
+        const tenderDocIds = tender.relatedDocumentIds ? JSON.parse(tender.relatedDocumentIds) : [];
+        const tenderDocs = allDocs.filter((doc: any) => tenderDocIds.includes(doc.id));
+        setTenderDocuments(tenderDocs);
+        
+        // Load company documents
+        const companyDocIds = tender.companyDocumentIds ? JSON.parse(tender.companyDocumentIds) : [];
+        const companyDocs = allDocs.filter((doc: any) => companyDocIds.includes(doc.id));
+        setCompanyDocuments(companyDocs);
+        
+        // Load RFP samples
+        const rfpSampleIds = tender.rfpSampleIds ? JSON.parse(tender.rfpSampleIds) : [];
+        const rfpDocs = allDocs.filter((doc: any) => rfpSampleIds.includes(doc.id));
+        setRfpSamples(rfpDocs);
       }
     } catch (error) {
       console.error('Failed to load documents:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const renderDocumentList = (docs: any[], title: string, description: string) => {
+    if (docs.length === 0) return null;
+    
+    return (
+      <div className="mb-4">
+        <h4 className="text-sm font-semibold text-gray-700 mb-1">{title}</h4>
+        <p className="text-xs text-gray-500 mb-2">{description}</p>
+        <div className="space-y-2">
+          {docs.map((doc) => (
+            <div
+              key={doc.id}
+              className="flex items-center space-x-3 p-2 border rounded-lg hover:bg-gray-50"
+            >
+              <File className="h-4 w-4 text-blue-600" />
+              <div className="flex-1">
+                <p className="text-sm font-medium">{doc.fileName}</p>
+                <p className="text-xs text-gray-500">
+                  {doc.status === 'processed' ? 'Processed' : doc.status === 'processing' ? 'Processing...' : 'Uploaded'}
+                  {doc.documentType && ` • ${doc.documentType}`}
+                </p>
+              </div>
+              {doc.status === 'processed' && (
+                <span className="text-xs text-green-600 font-medium">✓ Ready</span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   if (loading) {
@@ -375,7 +413,9 @@ function LinkedDocuments({ tenderId }: { tenderId: string }) {
     );
   }
 
-  if (documents.length === 0) {
+  const totalDocs = tenderDocuments.length + companyDocuments.length + rfpSamples.length;
+
+  if (totalDocs === 0) {
     return (
       <Card>
         <CardHeader>
@@ -393,28 +433,24 @@ function LinkedDocuments({ tenderId }: { tenderId: string }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Linked Documents ({documents.length})</CardTitle>
+        <CardTitle>Linked Documents ({totalDocs})</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-2">
-          {documents.map((doc) => (
-            <div
-              key={doc.id}
-              className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50"
-            >
-              <File className="h-5 w-5 text-blue-600" />
-              <div className="flex-1">
-                <p className="text-sm font-medium">{doc.fileName}</p>
-                <p className="text-xs text-gray-500">
-                  {doc.status === 'processed' ? 'Processed' : doc.status === 'processing' ? 'Processing...' : 'Uploaded'}
-                </p>
-              </div>
-              {doc.status === 'processed' && (
-                <span className="text-xs text-green-600 font-medium">✓ Ready</span>
-              )}
-            </div>
-          ))}
-        </div>
+        {renderDocumentList(
+          tenderDocuments,
+          `Tender Documents (${tenderDocuments.length})`,
+          'Documents from the government/client defining requirements'
+        )}
+        {renderDocumentList(
+          companyDocuments,
+          `Company Data Documents (${companyDocuments.length})`,
+          'Your company information, prices, team, projects'
+        )}
+        {renderDocumentList(
+          rfpSamples,
+          `RFP Proposal Samples (${rfpSamples.length})`,
+          'Your previous successful proposals for format replication'
+        )}
       </CardContent>
     </Card>
   );

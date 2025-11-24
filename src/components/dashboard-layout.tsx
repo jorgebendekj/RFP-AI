@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter, usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -12,13 +13,18 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const { t } = useClientTranslations();
+  const [userName, setUserName] = useState<string>('');
+
+  useEffect(() => {
+    // Only access localStorage on client side
+    const name = localStorage.getItem('userName') || 'Demo User';
+    setUserName(name);
+  }, []);
 
   const handleLogout = () => {
     localStorage.clear();
     router.push('/auth/login');
   };
-
-  const userName = typeof window !== 'undefined' ? localStorage.getItem('userName') : '';
 
   const isActive = (path: string) => {
     if (path === '/dashboard') {
@@ -38,7 +44,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </div>
             <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-blue-500 to-cyan-600 bg-clip-text text-transparent">PROPOSA AI</h1>
-              <p className="text-xs text-gray-500">{userName || 'Demo User'}</p>
+              <p className="text-xs text-gray-500">{userName}</p>
             </div>
           </div>
         </div>

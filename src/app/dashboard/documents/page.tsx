@@ -19,6 +19,7 @@ export default function DocumentsPage() {
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [documentType, setDocumentType] = useState<'model_rfp' | 'company_data' | 'tender_document'>('model_rfp');
+  const [specificDocumentType, setSpecificDocumentType] = useState<string>('');
 
   useEffect(() => {
     const userId = localStorage.getItem('userId');
@@ -63,6 +64,9 @@ export default function DocumentsPage() {
       formData.append('companyId', companyId || '');
       formData.append('userId', userId || '');
       formData.append('type', documentType);
+      if (specificDocumentType) {
+        formData.append('documentType', specificDocumentType);
+      }
 
       const response = await fetch('/api/documents/upload', {
         method: 'POST',
@@ -159,18 +163,73 @@ export default function DocumentsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="documentType">Document Type</Label>
+              <Label htmlFor="documentType">Document Category</Label>
               <select
                 id="documentType"
                 value={documentType}
-                onChange={(e) => setDocumentType(e.target.value as any)}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                onChange={(e) => {
+                  setDocumentType(e.target.value as any);
+                  setSpecificDocumentType(''); // Reset specific type
+                }}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
               >
-                <option value="model_rfp">Model RFP / Previous Proposal</option>
-                <option value="company_data">Company Data / Internal Document</option>
-                <option value="tender_document">Tender Document</option>
+                <option value="company_data">💼 Company Data (Prices, Info, CVs, Projects)</option>
+                <option value="tender_document">📋 Tender Documents (From Government Portal)</option>
+                <option value="model_rfp">✅ RFP Proposal Samples (Previous Proposals)</option>
               </select>
+              <p className="text-xs text-gray-500">
+                {documentType === 'company_data' && 'Internal documents with your company information, prices, team, etc.'}
+                {documentType === 'tender_document' && 'Documents received from the government/client defining requirements'}
+                {documentType === 'model_rfp' && 'Your previous successful proposals to learn format and style'}
+              </p>
             </div>
+
+            {/* Specific Document Type (Optional but Recommended) */}
+            {documentType && (
+              <div className="space-y-2">
+                <Label htmlFor="specificType">
+                  Specific Document Type <span className="text-xs text-gray-500">(Optional - Auto-detected if not selected)</span>
+                </Label>
+                <select
+                  id="specificType"
+                  value={specificDocumentType}
+                  onChange={(e) => setSpecificDocumentType(e.target.value)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="">Auto-detect from file name and content</option>
+                  
+                  {documentType === 'company_data' && (
+                    <>
+                      <option value="price_table">Price Table / Rate Card</option>
+                      <option value="company_profile">Company Profile</option>
+                      <option value="project_portfolio">Project Portfolio / References</option>
+                      <option value="team_cvs">Team CVs / Qualifications</option>
+                      <option value="certifications">Certifications / Licenses</option>
+                      <option value="financial_statements">Financial Statements</option>
+                      <option value="formulario_a1_identificacion">Form A-1 (Company ID)</option>
+                      <option value="formulario_a4_modelo_precios">Form A-4 (Price Model)</option>
+                    </>
+                  )}
+                  
+                  {documentType === 'tender_document' && (
+                    <>
+                      <option value="tender_document">General Tender Document (DCD/RFP)</option>
+                      <option value="technical_specifications">Technical Specifications</option>
+                      <option value="anexo_1_especificaciones">Annex 1 (Technical Specs)</option>
+                      <option value="formulario_a3_propuesta_economica">Form A-3 (Economic Proposal Template)</option>
+                      <option value="bill_of_quantities">Bill of Quantities (BOQ)</option>
+                    </>
+                  )}
+                  
+                  {documentType === 'model_rfp' && (
+                    <>
+                      <option value="winning_proposal">Winning Proposal</option>
+                      <option value="previous_proposal">Previous Proposal</option>
+                    </>
+                  )}
+                </select>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="file">File</Label>

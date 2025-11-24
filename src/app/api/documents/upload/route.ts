@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { processDocument, chunkText, saveUploadedFile } from '@/lib/file-processor';
 import { adminDB } from '@/lib/instantdb-admin';
+import { DocumentType, detectDocumentType } from '@/lib/document-types';
+import { extractTablesFromDocument } from '@/lib/table-extractor';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,6 +12,7 @@ export async function POST(request: NextRequest) {
     const companyId = formData.get('companyId') as string;
     const userId = formData.get('userId') as string;
     const type = formData.get('type') as 'model_rfp' | 'company_data' | 'tender_document';
+    const documentType = formData.get('documentType') as string | null;
 
     if (!file || !companyId || !userId || !type) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -33,11 +36,12 @@ export async function POST(request: NextRequest) {
         metadata: JSON.stringify({}),
         hasTables: false,
         status: 'uploaded',
+        documentType: documentType || 'other',
       }),
     ]);
 
     // Process document in background
-    processDocumentAsync(documentId, filePath, file.type, companyId, type);
+    processDocumentAsync(documentId, filePath, file.type, file.name, companyId, type, documentType);
 
     return NextResponse.json({
       documentId,
@@ -53,12 +57,35 @@ async function processDocumentAsync(
   documentId: string,
   filePath: string,
   mimeType: string,
+  fileName: string,
   companyId: string,
-  type: string
+  type: string,
+  providedDocumentType: string | null
 ) {
   try {
+    console.log(`[Processing] Starting document ${documentId}: ${fileName}`);
+    
     // Process document
     const processed = await processDocument(filePath, mimeType);
+    console.log(`[Processing] Extracted ${processed.textExtracted.length} characters from ${fileName}`);
+
+    // Detect specific document type if not provided
+    let documentType = providedDocumentType;
+    if (!documentType || documentType === 'other') {
+      documentType = detectDocumentType(fileName, processed.textExtracted);
+      console.log(`[Processing] Auto-detected document type: ${documentType}`);
+    }
+
+    // Extract tables from document
+    let extractedTables: any[] = [];
+    try {
+      const fs = require('fs');
+      const fileBuffer = fs.readFileSync(filePath);
+      extractedTables = await extractTablesFromDocument(fileBuffer, mimeType, fileName);
+      console.log(`[Processing] Extracted ${extractedTables.length} tables from ${fileName}`);
+    } catch (error) {
+      console.error('[Processing] Table extraction failed:', error);
+    }
 
     // Detect language from extracted text
     let detectedLanguage = 'en';
@@ -71,24 +98,57 @@ async function processDocumentAsync(
         });
         const langData = await langResponse.json();
         detectedLanguage = langData.language || 'en';
+        console.log(`[Processing] Detected language: ${detectedLanguage}`);
       } catch (e) {
-        console.log('Language detection failed, defaulting to English');
+        console.log('[Processing] Language detection failed, defaulting to English');
       }
     }
 
-    // Update document with extracted text and detected language
+    // Prepare enhanced metadata
+    const enhancedMetadata = {
+      ...processed.metadata,
+      documentType,
+      detectedLanguage,
+      tablesCount: extractedTables.length,
+      hasPricingInfo: extractedTables.some(t => 
+        t.headers.some((h: string) => /precio|price|costo|cost/i.test(h))
+      ),
+      hasContactInfo: /email|teléfono|phone|dirección|address/i.test(processed.textExtracted),
+    };
+
+    // Update document with all extracted information
     await adminDB.transact([
       adminDB.tx.documents[documentId].update({
         textExtracted: processed.textExtracted,
-        metadata: JSON.stringify(processed.metadata),
-        hasTables: processed.hasTables,
+        metadata: JSON.stringify(enhancedMetadata),
+        hasTables: extractedTables.length > 0,
         detectedLanguage,
+        documentType,
         status: 'processed',
       }),
     ]);
 
+    // Save extracted tables as separate records
+    for (let i = 0; i < extractedTables.length; i++) {
+      const tableId = uuidv4();
+      await adminDB.transact([
+        adminDB.tx.extractedTables[tableId].update({
+          documentId,
+          companyId,
+          title: extractedTables[i].title || `Table ${i + 1}`,
+          headers: JSON.stringify(extractedTables[i].headers),
+          rows: JSON.stringify(extractedTables[i].rows),
+          metadata: JSON.stringify(extractedTables[i].metadata),
+          orderIndex: i,
+          createdAt: Date.now(),
+        }),
+      ]);
+    }
+    console.log(`[Processing] Saved ${extractedTables.length} tables to database`);
+
     // Create chunks and generate embeddings
     const chunks = chunkText(processed.textExtracted, 500);
+    console.log(`[Processing] Created ${chunks.length} chunks for embedding`);
     
     for (let i = 0; i < chunks.length; i++) {
       const chunkId = uuidv4();
@@ -109,11 +169,14 @@ async function processDocumentAsync(
         }),
       ]);
     }
+
+    console.log(`[Processing] ✅ Successfully processed ${fileName}`);
   } catch (error) {
-    console.error('Document processing error:', error);
+    console.error('[Processing] ❌ Document processing error:', error);
     await adminDB.transact([
       adminDB.tx.documents[documentId].update({
         status: 'error',
+        metadata: JSON.stringify({ error: (error as Error).message }),
       }),
     ]);
   }

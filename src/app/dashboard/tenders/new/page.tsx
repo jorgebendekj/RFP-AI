@@ -19,20 +19,36 @@ export default function NewTenderPage() {
     country: '',
     deadline: '',
   });
-  const [documents, setDocuments] = useState<any[]>([]);
-  const [selectedDocs, setSelectedDocs] = useState<string[]>([]);
+  const [tenderDocuments, setTenderDocuments] = useState<any[]>([]);
+  const [companyDocuments, setCompanyDocuments] = useState<any[]>([]);
+  const [rfpSamples, setRfpSamples] = useState<any[]>([]);
+  const [selectedTenderDocs, setSelectedTenderDocs] = useState<string[]>([]);
+  const [selectedCompanyDocs, setSelectedCompanyDocs] = useState<string[]>([]);
+  const [selectedRfpSamples, setSelectedRfpSamples] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadTenderDocuments();
+    loadAllDocuments();
   }, []);
 
-  const loadTenderDocuments = async () => {
+  const loadAllDocuments = async () => {
     try {
       const companyId = localStorage.getItem('companyId');
-      const response = await fetch(`/api/documents/list?companyId=${companyId}&type=tender_document`);
-      const data = await response.json();
-      setDocuments(data.documents || []);
+      
+      // Load tender documents
+      const tenderResponse = await fetch(`/api/documents/list?companyId=${companyId}&type=tender_document`);
+      const tenderData = await tenderResponse.json();
+      setTenderDocuments(tenderData.documents || []);
+      
+      // Load company data documents
+      const companyResponse = await fetch(`/api/documents/list?companyId=${companyId}&type=company_data`);
+      const companyData = await companyResponse.json();
+      setCompanyDocuments(companyData.documents || []);
+      
+      // Load RFP proposal samples
+      const rfpResponse = await fetch(`/api/documents/list?companyId=${companyId}&type=model_rfp`);
+      const rfpData = await rfpResponse.json();
+      setRfpSamples(rfpData.documents || []);
     } catch (error) {
       console.error('Failed to load documents:', error);
     }
@@ -42,8 +58,20 @@ export default function NewTenderPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleDocToggle = (docId: string) => {
-    setSelectedDocs((prev) =>
+  const handleTenderDocToggle = (docId: string) => {
+    setSelectedTenderDocs((prev) =>
+      prev.includes(docId) ? prev.filter((id) => id !== docId) : [...prev, docId]
+    );
+  };
+
+  const handleCompanyDocToggle = (docId: string) => {
+    setSelectedCompanyDocs((prev) =>
+      prev.includes(docId) ? prev.filter((id) => id !== docId) : [...prev, docId]
+    );
+  };
+
+  const handleRfpSampleToggle = (docId: string) => {
+    setSelectedRfpSamples((prev) =>
       prev.includes(docId) ? prev.filter((id) => id !== docId) : [...prev, docId]
     );
   };
@@ -65,7 +93,9 @@ export default function NewTenderPage() {
           companyId,
           ...formData,
           deadline: deadlineTimestamp,
-          relatedDocumentIds: selectedDocs,
+          relatedDocumentIds: selectedTenderDocs, // Tender documents (from government)
+          companyDocumentIds: selectedCompanyDocs, // Company data documents
+          rfpSampleIds: selectedRfpSamples, // RFP proposal samples
         }),
       });
 
@@ -165,29 +195,116 @@ export default function NewTenderPage() {
             </CardContent>
           </Card>
 
+          {/* Tender Documents (from government) */}
           <Card>
             <CardHeader>
               <CardTitle>Link Tender Documents</CardTitle>
+              <p className="text-sm text-gray-500 mt-1">
+                Documents from the government/client defining requirements
+              </p>
             </CardHeader>
             <CardContent>
-              {documents.length === 0 ? (
+              {tenderDocuments.length === 0 ? (
                 <p className="text-sm text-gray-500">
                   No tender documents uploaded yet. Upload documents from the Documents page first.
                 </p>
               ) : (
                 <div className="space-y-2">
-                  {documents.map((doc) => (
+                  {tenderDocuments.map((doc) => (
                     <label
                       key={doc.id}
                       className="flex items-center space-x-2 p-2 border rounded hover:bg-gray-50 cursor-pointer"
                     >
                       <input
                         type="checkbox"
-                        checked={selectedDocs.includes(doc.id)}
-                        onChange={() => handleDocToggle(doc.id)}
+                        checked={selectedTenderDocs.includes(doc.id)}
+                        onChange={() => handleTenderDocToggle(doc.id)}
                         className="h-4 w-4"
                       />
                       <span className="text-sm">{doc.fileName}</span>
+                      {doc.status === 'processed' && (
+                        <span className="text-xs text-green-600 ml-auto">✓ Ready</span>
+                      )}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Company Data Documents (optional but recommended) */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Company Data Documents (Optional)</CardTitle>
+              <p className="text-sm text-gray-500 mt-1">
+                Your company information, prices, team, projects - helps AI create personalized proposals
+              </p>
+            </CardHeader>
+            <CardContent>
+              {companyDocuments.length === 0 ? (
+                <p className="text-sm text-gray-500">
+                  No company data documents uploaded yet. Upload price tables, company profiles, etc. from the Documents page.
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {companyDocuments.map((doc) => (
+                    <label
+                      key={doc.id}
+                      className="flex items-center space-x-2 p-2 border rounded hover:bg-gray-50 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedCompanyDocs.includes(doc.id)}
+                        onChange={() => handleCompanyDocToggle(doc.id)}
+                        className="h-4 w-4"
+                      />
+                      <span className="text-sm">{doc.fileName}</span>
+                      {doc.documentType && (
+                        <span className="text-xs text-blue-600 ml-2">({doc.documentType})</span>
+                      )}
+                      {doc.status === 'processed' && (
+                        <span className="text-xs text-green-600 ml-auto">✓ Ready</span>
+                      )}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* RFP Proposal Samples (optional but recommended) */}
+          <Card>
+            <CardHeader>
+              <CardTitle>RFP Proposal Samples (Optional)</CardTitle>
+              <p className="text-sm text-gray-500 mt-1">
+                Your previous successful proposals - helps AI replicate format and structure
+              </p>
+            </CardHeader>
+            <CardContent>
+              {rfpSamples.length === 0 ? (
+                <p className="text-sm text-gray-500">
+                  No RFP proposal samples uploaded yet. Upload your previous winning proposals from the Documents page.
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {rfpSamples.map((doc) => (
+                    <label
+                      key={doc.id}
+                      className="flex items-center space-x-2 p-2 border rounded hover:bg-gray-50 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedRfpSamples.includes(doc.id)}
+                        onChange={() => handleRfpSampleToggle(doc.id)}
+                        className="h-4 w-4"
+                      />
+                      <span className="text-sm">{doc.fileName}</span>
+                      {doc.documentType && (
+                        <span className="text-xs text-blue-600 ml-2">({doc.documentType})</span>
+                      )}
+                      {doc.status === 'processed' && (
+                        <span className="text-xs text-green-600 ml-auto">✓ Ready</span>
+                      )}
                     </label>
                   ))}
                 </div>
