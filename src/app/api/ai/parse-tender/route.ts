@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDB } from '@/lib/instantdb-admin';
-import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { googleAI, GEMINI_MODEL, generateContentWithRetry } from '@/lib/gemini';
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,12 +37,13 @@ export async function POST(request: NextRequest) {
       .map((doc: any) => doc.textExtracted)
       .join('\n\n');
 
-    // Parse tender using AI
+    // Parse tender using Gemini 3
+    // Increased context limit for Gemini 3 (1M tokens capacity)
     const prompt = `You are an expert at analyzing government tender documents. 
 Analyze the following tender document and extract key information in JSON format.
 
 Tender Document:
-${combinedText.substring(0, 15000)}
+${combinedText.substring(0, 500000)}
 
 Extract the following information and return as JSON:
 {
@@ -69,14 +66,26 @@ Extract the following information and return as JSON:
 
 Return only valid JSON, no other text.`;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.3,
-      response_format: { type: 'json_object' },
+    const response = await generateContentWithRetry({
+      model: GEMINI_MODEL,
+      contents: [{
+        parts: [{ text: prompt }]
+      }],
+      config: {
+        temperature: 0.3,
+        responseMimeType: 'application/json',
+      }
     });
 
-    const parsedRequirements = JSON.parse(completion.choices[0].message.content || '{}');
+    let jsonString = response.text || '{}';
+    // Cleanup if model returns markdown blocks
+    if (jsonString.startsWith('```json')) {
+        jsonString = jsonString.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+    } else if (jsonString.startsWith('```')) {
+        jsonString = jsonString.replace(/^```\s*/, '').replace(/\s*```$/, '');
+    }
+
+    const parsedRequirements = JSON.parse(jsonString);
 
     // Update tender with parsed requirements
     await adminDB.transact([
@@ -93,5 +102,3 @@ Return only valid JSON, no other text.`;
     return NextResponse.json({ error: error.message || 'Failed to parse tender' }, { status: 500 });
   }
 }
-
-

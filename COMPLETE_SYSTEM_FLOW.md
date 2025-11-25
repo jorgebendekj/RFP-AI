@@ -703,3 +703,5 @@ ${buildInstructions(companyInfo, materials, labor, tenderReqs)}
 **Creado**: 24 de noviembre de 2025  
 **Para**: Jorge Bendek - RFP AI Project
 
+
+

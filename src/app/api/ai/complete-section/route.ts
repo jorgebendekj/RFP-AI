@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDB } from '@/lib/instantdb-admin';
-import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { googleAI, GEMINI_MODEL, generateContentWithRetry } from '@/lib/gemini';
 
 export async function POST(request: NextRequest) {
   try {
@@ -48,7 +44,7 @@ Current content: ${contentToImprove}
 
 ${additionalContext ? `ADDITIONAL CONTEXT FROM UPLOADED DOCUMENT:
 NOTE: If you see [HTML_CONTENT]...[/HTML_CONTENT] tags, extract and convert the HTML tables within them.
-${additionalContext.substring(0, 10000)}
+${additionalContext.substring(0, 200000)}
 
 CRITICAL: Analyze this document carefully and extract:
 1. Any tables - replicate them exactly using HTML table structure
@@ -123,13 +119,15 @@ IMPORTANT:
 
 Generate the improved section content now:`;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.7,
+    const completion = await generateContentWithRetry({
+      model: GEMINI_MODEL,
+      contents: [{ parts: [{ text: prompt }] }],
+      config: {
+        temperature: 0.7,
+      }
     });
 
-    let improvedContent = completion.choices[0].message.content || '';
+    let improvedContent = completion.text || '';
     
     // Convert any remaining markdown bold to HTML (safety fallback)
     improvedContent = improvedContent
@@ -181,5 +179,3 @@ Generate the improved section content now:`;
     return NextResponse.json({ error: error.message || 'Failed to complete section' }, { status: 500 });
   }
 }
-
-

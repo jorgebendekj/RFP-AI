@@ -246,7 +246,7 @@ function extractTablesFromText(text: string, extension: string): ExtractedTable[
  */
 function extractTablesFromHTML(html: string): ExtractedTable[] {
   const tables: ExtractedTable[] = [];
-  const tableRegex = /<table[^>]*>(.*?)<\/table>/gis;
+  const tableRegex = /<table[^>]*>([\s\S]*?)<\/table>/gi;
   let match;
   
   while ((match = tableRegex.exec(html)) !== null) {
@@ -261,7 +261,7 @@ function extractTablesFromHTML(html: string): ExtractedTable[] {
     }
     
     // Extract rows
-    const rowRegex = /<tr[^>]*>(.*?)<\/tr>/gis;
+    const rowRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
     const rows: string[][] = [];
     let rowMatch;
     
@@ -287,7 +287,7 @@ function extractTablesFromHTML(html: string): ExtractedTable[] {
     if (headers.length > 0 || rows.length > 0) {
       // Try to find a title before the table
       const beforeTable = html.substring(0, match.index);
-      const titleMatch = beforeTable.match(/<h[1-6][^>]*>([^<]+)<\/h[1-6]>(?:(?!<h[1-6]).)*$/is);
+      const titleMatch = beforeTable.match(/<h[1-6][^>]*>([^<]+)<\/h[1-6]>(?:(?!<h[1-6])[\s\S])*$/i);
       const title = titleMatch ? stripHTML(titleMatch[1]) : '';
       
       tables.push({
@@ -510,4 +510,5 @@ export function formatTableAsMarkdown(table: ExtractedTable): string {
   
   return md;
 }
+
 

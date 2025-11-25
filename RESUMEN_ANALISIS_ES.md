@@ -291,3 +291,5 @@ Con las mejoras propuestas, el sistema podrá generar propuestas profesionales q
 **Creado**: 24 de noviembre de 2025  
 **Para**: Jorge Bendek - RFP AI Project
 
+
+

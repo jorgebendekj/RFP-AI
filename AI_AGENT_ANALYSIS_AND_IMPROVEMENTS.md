@@ -581,3 +581,5 @@ Cuando el usuario genere una propuesta, debería ver algo como:
 
 Este formato debería replicar exactamente los documentos originales de DRJ Construcciones.
 
+
+

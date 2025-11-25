@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { googleAI, embedContentWithRetry } from '@/lib/gemini';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,19 +10,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Text is required' }, { status: 400 });
     }
 
-    const response = await openai.embeddings.create({
-      model: 'text-embedding-3-small',
-      input: text.substring(0, 8000), // Limit text length
+    // Use Gemini for embeddings
+    // text-embedding-004 is the latest stable embedding model
+    const response = await embedContentWithRetry({
+      model: 'text-embedding-004',
+      contents: [{
+        parts: [{ text: text.substring(0, 10000) }]
+      }]
     });
 
+    // response.embeddings should contain the embeddings when 'contents' (plural) is used
+    // We expect a single embedding for the single content part
+    const embedding = response.embeddings?.[0]?.values || [];
+
     return NextResponse.json({
-      embedding: response.data[0].embedding,
+      embedding: embedding,
     });
   } catch (error: any) {
     console.error('Embedding error:', error);
     return NextResponse.json({ error: error.message || 'Failed to generate embedding' }, { status: 500 });
   }
 }
-
-
-

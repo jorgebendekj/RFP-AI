@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDB } from '@/lib/instantdb-admin';
-import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { googleAI, GEMINI_MODEL, generateContentWithRetry } from '@/lib/gemini';
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,10 +24,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No model RFP documents found' }, { status: 404 });
     }
 
-    // Sample text from documents
+    // Sample text from documents - Increased limit for Gemini 3
     const sampleTexts = documents
-      .slice(0, 3)
-      .map((doc: any) => doc.textExtracted.substring(0, 5000))
+      .slice(0, 10) // Analyze up to 10 docs if available
+      .map((doc: any) => doc.textExtracted.substring(0, 100000)) // 100k chars per doc
       .join('\n\n---\n\n');
 
     // Analyze company style using AI
@@ -60,14 +56,25 @@ Extract and return the following information as JSON:
 
 Return only valid JSON, no other text.`;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.3,
-      response_format: { type: 'json_object' },
+    const response = await generateContentWithRetry({
+      model: GEMINI_MODEL,
+      contents: [{
+        parts: [{ text: prompt }]
+      }],
+      config: {
+        temperature: 0.3,
+        responseMimeType: 'application/json',
+      }
     });
 
-    const companyStyle = JSON.parse(completion.choices[0].message.content || '{}');
+    let jsonString = response.text || '{}';
+    if (jsonString.startsWith('```json')) {
+        jsonString = jsonString.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+    } else if (jsonString.startsWith('```')) {
+        jsonString = jsonString.replace(/^```\s*/, '').replace(/\s*```$/, '');
+    }
+
+    const companyStyle = JSON.parse(jsonString);
 
     return NextResponse.json({
       companyStyle,
@@ -77,5 +84,3 @@ Return only valid JSON, no other text.`;
     return NextResponse.json({ error: error.message || 'Failed to analyze company style' }, { status: 500 });
   }
 }
-
-
