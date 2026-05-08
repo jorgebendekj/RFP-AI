@@ -1,13 +1,17 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import { Toaster } from '@/components/ui/toaster';
+import type { Metadata } from "next";
+import { IBM_Plex_Mono } from "next/font/google";
+import "./globals.css";
 
-const inter = Inter({ subsets: ['latin'] });
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-mono",
+});
 
 export const metadata: Metadata = {
-  title: 'PROPOSA AI - Intelligent Proposal Generation',
-  description: 'AI-powered platform for generating winning government tender proposals',
+  title: "SICOES Monitor · IA de Licitaciones Bolivia",
+  description:
+    "Monitoreo inteligente de licitaciones en el Sistema de Contrataciones Estatales de Bolivia",
 };
 
 export default function RootLayout({
@@ -16,13 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        {children}
-        <Toaster />
-      </body>
+    <html lang="es">
+      <body className={ibmPlexMono.variable}>{children}</body>
     </html>
   );
 }
-
-
