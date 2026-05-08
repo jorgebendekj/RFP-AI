@@ -289,6 +289,63 @@ Devolvé SOLO JSON válido sin texto adicional:
   }
 }
 
+// ─── FORM 100 Monto Fetcher ───────────────────────────────────────────────────
+
+/**
+ * Fetches a SICOES tender detail or FORM 100 page and tries to extract the
+ * Precio Referencial / Monto Base. Works on both the tender detail page and
+ * the formularios page. Returns undefined if not found or on any error.
+ */
+async function fetchMonto(url: string): Promise<string | undefined> {
+  try {
+    const resp = await fetch(url, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "es-ES,es;q=0.9",
+      },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!resp.ok) return undefined;
+    const html = await resp.text();
+    const clean = html
+      .replace(/<script[\s\S]*?<\/script>/gi, "")
+      .replace(/<style[\s\S]*?<\/style>/gi, "");
+
+    // Try common SICOES monto label patterns (case-insensitive)
+    const labelPatterns = [
+      /precio\s+referencial[^<\d]*(Bs\.?\s*[\d.,]+)/i,
+      /monto\s+base[^<\d]*(Bs\.?\s*[\d.,]+)/i,
+      /presupuesto[^<\d]*(Bs\.?\s*[\d.,]+)/i,
+      /precio\s+referencial[^<]*<[^>]+>[^<]*(Bs\.?\s*[\d.,]+)/i,
+    ];
+    for (const p of labelPatterns) {
+      const m = clean.match(p);
+      if (m?.[1]) return `Bs. ${m[1].replace(/Bs\.?\s*/i, "").trim()}`;
+    }
+
+    // Fallback: look for standalone "Bs. 1.234.567,89" pattern near keywords
+    const bsPattern = /Bs\.?\s*([\d.]+,\d{2})/g;
+    const amounts: string[] = [];
+    let bm: RegExpExecArray | null;
+    while ((bm = bsPattern.exec(clean)) !== null) {
+      amounts.push(bm[1]);
+    }
+    // Return largest amount found (likely the contract value, not subtotals)
+    if (amounts.length > 0) {
+      const largest = amounts
+        .map((a) => ({ raw: a, num: parseFloat(a.replace(/\./g, "").replace(",", ".")) }))
+        .sort((a, b) => b.num - a.num)[0];
+      return `Bs. ${largest.raw}`;
+    }
+
+    return undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 // Declare Anthropic type for parameters
 type Anthropic = Awaited<ReturnType<typeof import("@anthropic-ai/sdk")["default"]["prototype"]["constructor"]["prototype"]["messages"]["create"]>> extends { stop_reason: string }
   ? never
@@ -339,6 +396,27 @@ export async function POST(req: NextRequest) {
       keywords
     );
 
+    // ── Phase 2.5: Fetch FORM 100 montos for top-scored tenders ──────────────
+    // Only fetch the top 10 by relevance to keep response time reasonable
+    const topCuces = new Set(
+      [...scored]
+        .sort((a, b) => b.relevancia - a.relevancia)
+        .slice(0, 10)
+        .map((s) => s.cuce)
+    );
+    const montoMap = new Map<string, string>();
+    await Promise.all(
+      rawTenders
+        .filter((t) => topCuces.has(t.cuce) && (t.form100Url || t.url))
+        .map(async (t) => {
+          // Prefer FORM 100 url, fall back to tender detail page
+          const fetchUrl = t.form100Url ?? t.url;
+          if (!fetchUrl || fetchUrl.includes("convocatorias.php")) return;
+          const monto = await fetchMonto(fetchUrl);
+          if (monto) montoMap.set(t.cuce, monto);
+        })
+    );
+
     // ── Phase 3: Merge real data + AI scoring ─────────────────────────────────
     const tenders = rawTenders
       .map((t, i) => {
@@ -348,7 +426,7 @@ export async function POST(req: NextRequest) {
           codigo: t.cuce,
           descripcion: t.objeto,
           entidad: t.entidad,
-          monto: undefined as string | undefined,
+          monto: montoMap.get(t.cuce),
           fecha: t.fechaPresentacion,
           departamento: department,
           tipo: [t.tipoContratacion, t.modalidad].filter(Boolean).join(" · "),
