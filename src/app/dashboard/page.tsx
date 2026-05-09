@@ -168,7 +168,23 @@ export default function DashboardPage() {
         }),
       });
       if (!resp.ok) {
-        const errData = await resp.json().catch(() => ({})) as { error?: string };
+        const errData = await resp.json().catch(() => ({})) as {
+          error?: string;
+          debug?: {
+            scrapingbeeKeyDetected?: boolean;
+            scrapingbeeKeyPrefix?: string | null;
+            elapsedMs?: number;
+            keywordsTried?: string[];
+            hint?: string;
+          };
+        };
+        if (errData.debug) {
+          addLog(`◆ Diagnóstico:`);
+          addLog(`  · ScrapingBee key detectada: ${errData.debug.scrapingbeeKeyDetected ? "SÍ" : "NO"}${errData.debug.scrapingbeeKeyPrefix ? ` (empieza con "${errData.debug.scrapingbeeKeyPrefix}")` : ""}`);
+          addLog(`  · Tiempo total: ${errData.debug.elapsedMs}ms`);
+          addLog(`  · Palabras probadas: ${errData.debug.keywordsTried?.join(", ")}`);
+          if (errData.debug.hint) addLog(`  · ${errData.debug.hint}`);
+        }
         throw new Error(errData.error || `Error ${resp.status}`);
       }
       const data = await resp.json() as ScanResult;

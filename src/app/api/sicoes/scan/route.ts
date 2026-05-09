@@ -806,10 +806,14 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Phase 1: Scrape real SICOES data ──────────────────────────────────────
+    const t0 = Date.now();
+    const sbKeyPresent = !!process.env.SCRAPINGBEE_API_KEY;
+    const sbKeyPrefix = process.env.SCRAPINGBEE_API_KEY?.slice(0, 6) || null;
     const rawTenders = await scrapeSICOES(keywords, department);
+    const elapsedMs = Date.now() - t0;
 
     if (rawTenders.length === 0) {
-      const sbConfigured = !!process.env.SCRAPINGBEE_API_KEY;
+      const sbConfigured = sbKeyPresent;
       return NextResponse.json(
         {
           error: sbConfigured
@@ -820,6 +824,16 @@ export async function POST(req: NextRequest) {
               "Configurá SCRAPINGBEE_API_KEY en las variables de entorno de Vercel. " +
               "Registro gratuito: https://www.scrapingbee.com",
           source: "SICOES · sicoes.gob.bo",
+          debug: {
+            scrapingbeeKeyDetected: sbKeyPresent,
+            scrapingbeeKeyPrefix: sbKeyPrefix,
+            elapsedMs,
+            keywordsTried: keywords.slice(0, 5),
+            hint:
+              elapsedMs < 5000
+                ? "Response was too fast — ScrapingBee was likely NOT called. Verify env var is set AND project was redeployed."
+                : "ScrapingBee was called but returned no tenders. Check Vercel function logs for [sb] entries.",
+          },
         },
         { status: 404 }
       );
