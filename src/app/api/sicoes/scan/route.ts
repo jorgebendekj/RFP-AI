@@ -252,32 +252,72 @@ async function searchDirect(
  * Sign up: https://www.scrapingbee.com (1000 free credits)
  * Cost: 25 credits per JS render; 5 keywords = 25 credits per full scan.
  */
-async function scrapeWithScrapingBee(
+/**
+ * ScrapingBee call helper — handles errors, logs response metadata.
+ */
+async function callScrapingBee(
+  apiKey: string,
+  url: string,
+  extraParams: Record<string, string>
+): Promise<string | null> {
+  const params = new URLSearchParams({
+    api_key: apiKey,
+    url,
+    render_js: "true",
+    premium_proxy: "true",
+    timeout: "50000",
+    ...extraParams,
+  });
+
+  const resp = await fetch(`https://app.scrapingbee.com/api/v1/?${params}`, {
+    signal: AbortSignal.timeout(55000),
+  });
+
+  const creditsUsed = resp.headers.get("Spb-Cost") || "?";
+  const creditsLeft = resp.headers.get("Spb-Remaining-Api-Credits") || "?";
+
+  if (!resp.ok) {
+    const err = await resp.text().catch(() => "");
+    console.error(`[sb] HTTP ${resp.status} | credits_used=${creditsUsed} | ${err.slice(0, 200)}`);
+    return null;
+  }
+
+  console.log(`[sb] credits_used=${creditsUsed} remaining=${creditsLeft}`);
+  return resp.text();
+}
+
+/**
+ * Strategy A — XHR from inside the browser session (1 ScrapingBee call, all keywords).
+ *
+ * After Turnstile is solved by the real Chrome browser, we inject JS that
+ * makes synchronous XHR calls to operacion.php for every keyword at once,
+ * serializes the JSON responses and writes them into the page DOM.
+ *
+ * This is efficient (25 credits total regardless of keyword count) but
+ * relies on synchronous XHR being available in Chrome headless (it is,
+ * just deprecated with a console warning).
+ */
+async function sbStrategyXHR(
   keywords: string[],
   apiKey: string
-): Promise<RawTender[]> {
-  try {
-    // Build JS that runs inside the browser session (Turnstile already solved)
-    // Makes synchronous XHR to operacion.php for each keyword and collects HTML rows
-    const keywordsJson = JSON.stringify(keywords.slice(0, 5));
+): Promise<RawTender[] | null> {
+  const keywordsJson = JSON.stringify(keywords.slice(0, 5));
 
-    const jsScenario = {
-      instructions: [
-        // Wait for page to fully load (Turnstile solves itself)
-        { wait_for: { selector: "input[name='objetoContrato']" } },
-        { wait: 2000 },
-        // Execute XHR searches for all keywords and put results in page body
-        {
-          evaluate: `
+  const jsScenario = JSON.stringify({
+    instructions: [
+      { wait_for: { selector: "input[name='objetoContrato']" } },
+      { wait: 2500 },
+      {
+        evaluate: `
 (function() {
-  var keywords = ${keywordsJson};
+  var kws = ${keywordsJson};
   var results = [];
-  keywords.forEach(function(kw) {
+  kws.forEach(function(kw) {
     try {
-      var token = document.querySelector('input[name="token"]');
-      var tokenVal = token ? token.value : '';
-      var body = [
-        'token=' + encodeURIComponent(tokenVal),
+      var tokenEl = document.querySelector('input[name="token"]');
+      var tok = tokenEl ? tokenEl.value : '';
+      var payload = [
+        'token=' + encodeURIComponent(tok),
         'objetoContrato=' + encodeURIComponent(kw),
         'r1=11', 'subasta=', 'bienes=B', 'obras=O', 'servicios=S', 'consultoria=C',
         'tipo=Simple', 'operacion=convNacional',
@@ -288,90 +328,157 @@ async function scrapeWithScrapingBee(
       xhr.open('POST', '/portal/contrataciones/operacion.php', false);
       xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
       xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-      xhr.send(body);
-      if (xhr.status === 200) {
-        try {
-          var parsed = JSON.parse(xhr.responseText);
-          results.push({ keyword: kw, data: parsed.data || [], total: parsed.recordsTotal });
-        } catch(e) {
-          results.push({ keyword: kw, data: [], error: 'parse_error' });
-        }
+      xhr.send(payload);
+      if (xhr.status === 200 && xhr.responseText[0] === '{') {
+        var parsed = JSON.parse(xhr.responseText);
+        results.push({ kw: kw, data: parsed.data || [], total: parsed.recordsTotal || 0 });
       } else {
-        results.push({ keyword: kw, data: [], error: 'http_' + xhr.status });
+        results.push({ kw: kw, data: [], status: xhr.status });
       }
     } catch(e) {
-      results.push({ keyword: kw, data: [], error: String(e) });
+      results.push({ kw: kw, data: [], err: String(e) });
     }
   });
-  document.body.innerHTML = '<pre id="__sb_results__">' + JSON.stringify(results) + '</pre>';
+  document.open(); document.write('<pre id="__r__">' + JSON.stringify(results) + '</pre>'); document.close();
 })();
-          `.trim(),
-        },
-        { wait: 1000 },
-      ],
-    };
+        `.trim(),
+      },
+      { wait: 1000 },
+    ],
+  });
 
-    const params = new URLSearchParams({
-      api_key: apiKey,
-      url: `${SICOES_SEARCH}?tipo=convNacional`,
-      render_js: "true",
-      wait: "1000",
-      premium_proxy: "true",
-      js_scenario: JSON.stringify(jsScenario),
-      timeout: "50000",
-    });
+  const html = await callScrapingBee(apiKey, `${SICOES_SEARCH}?tipo=convNacional`, {
+    js_scenario: jsScenario,
+    wait: "1000",
+  });
 
-    console.log(`[sb] Calling ScrapingBee for ${keywords.length} keywords...`);
-    const resp = await fetch(`https://app.scrapingbee.com/api/v1/?${params}`, {
-      signal: AbortSignal.timeout(55000),
-    });
+  if (!html) return null;
 
-    if (!resp.ok) {
-      const errText = await resp.text().catch(() => "");
-      console.error(`[sb] ScrapingBee error ${resp.status}: ${errText.slice(0, 200)}`);
-      return [];
-    }
+  const jsonMatch = html.match(/<pre[^>]*id=["']__r__["'][^>]*>([\s\S]*?)<\/pre>/i);
+  if (!jsonMatch) {
+    console.warn("[sb][xhr] No __r__ element — XHR strategy failed, will try form-fill");
+    return null;
+  }
 
-    const html = await resp.text();
-    console.log(`[sb] Response: ${html.length} bytes`);
-
-    // Extract our JSON result from the page
-    const jsonMatch = html.match(/<pre[^>]*id=["']__sb_results__["'][^>]*>([\s\S]*?)<\/pre>/i);
-    if (!jsonMatch) {
-      console.warn("[sb] Could not find __sb_results__ in response");
-      // Fallback: try to parse the HTML directly (form was submitted normally)
-      return parseSICOESTable(html);
-    }
-
-    const allResults = JSON.parse(jsonMatch[1]) as Array<{
-      keyword: string;
+  try {
+    const rows = JSON.parse(jsonMatch[1]) as Array<{
+      kw: string;
       data: unknown[];
       total?: number;
-      error?: string;
+      status?: number;
+      err?: string;
     }>;
 
     const seen = new Set<string>();
     const tenders: RawTender[] = [];
+    let anyData = false;
 
-    for (const result of allResults) {
-      console.log(
-        `[sb] "${result.keyword}" → ${result.data.length} rows | total=${result.total} | err=${result.error || "none"}`
-      );
-      for (const row of result.data) {
-        const tender = parseOperacionRow(row, result.keyword);
-        if (tender && !seen.has(tender.cuce) && isVigente(tender.estado)) {
-          seen.add(tender.cuce);
-          tenders.push(tender);
+    for (const r of rows) {
+      console.log(`[sb][xhr] "${r.kw}" → ${r.data.length} rows (total=${r.total ?? r.status ?? r.err})`);
+      if (r.data.length > 0) anyData = true;
+      for (const row of r.data) {
+        const t = parseOperacionRow(row);
+        if (t && !seen.has(t.cuce) && isVigente(t.estado)) {
+          seen.add(t.cuce);
+          tenders.push(t);
         }
       }
     }
 
-    console.log(`[sb] Total unique vigente tenders: ${tenders.length}`);
+    if (!anyData) {
+      console.warn("[sb][xhr] All keywords returned 0 rows — XHR may not have access to operacion.php");
+      return null; // Fall through to Strategy B
+    }
+
+    console.log(`[sb][xhr] Total unique vigente tenders: ${tenders.length}`);
     return tenders;
-  } catch (err) {
-    console.error("[sb] ScrapingBee error:", err);
-    return [];
+  } catch (e) {
+    console.error("[sb][xhr] Parse error:", e);
+    return null;
   }
+}
+
+/**
+ * Strategy B — Form fill + HTML parsing (1 ScrapingBee call per keyword).
+ *
+ * More reliable than XHR: uses the page's normal search flow.
+ * The page auto-loads results on document.ready (listarBusqueda()),
+ * then we fill the form and trigger a new search.
+ * Results render into #tablaSimple tbody via jQuery DataTables.
+ *
+ * Cost: 25 credits × number of keywords (vs 25 total for XHR).
+ */
+async function sbStrategyFormFill(
+  keywords: string[],
+  apiKey: string
+): Promise<RawTender[]> {
+  const seen = new Set<string>();
+  const tenders: RawTender[] = [];
+
+  for (const kw of keywords.slice(0, 5)) {
+    const jsScenario = JSON.stringify({
+      instructions: [
+        { wait_for: { selector: "input[name='objetoContrato']" } },
+        { wait: 3000 }, // Wait for initial auto-search to complete
+        // Clear field and type the keyword
+        { evaluate: `document.querySelector("input[name='objetoContrato']").value = ""` },
+        { fill: { selector: "input[name='objetoContrato']", value: kw } },
+        // Select "Sólo Vigentes" radio (r1=11)
+        { evaluate: `(function(){ var r = document.querySelector("input[name='r1'][value='11']"); if(r) r.click(); })()` },
+        // Click search button
+        { click: { selector: ".busquedaForm" } },
+        // Wait for new results to appear
+        { wait: 4000 },
+      ],
+    });
+
+    console.log(`[sb][form] Searching "${kw}"...`);
+    const html = await callScrapingBee(apiKey, `${SICOES_SEARCH}?tipo=convNacional`, {
+      js_scenario: jsScenario,
+      wait: "1000",
+    });
+
+    if (!html) continue;
+
+    const parsed = parseSICOESTable(html);
+    console.log(`[sb][form] "${kw}" → ${parsed.length} tenders from HTML`);
+
+    for (const t of parsed) {
+      if (!seen.has(t.cuce) && isVigente(t.estado)) {
+        seen.add(t.cuce);
+        tenders.push(t);
+      }
+    }
+  }
+
+  console.log(`[sb][form] Total unique vigente tenders: ${tenders.length}`);
+  return tenders;
+}
+
+/**
+ * Orchestrates both ScrapingBee strategies:
+ * 1. Try XHR strategy (efficient: 25 credits for all keywords)
+ * 2. If XHR returns 0 data (operacion.php blocked), fall back to form-fill
+ *    (reliable: 25 credits × N keywords)
+ */
+async function scrapeWithScrapingBee(
+  keywords: string[],
+  apiKey: string
+): Promise<RawTender[]> {
+  // Strategy A: XHR (fast)
+  const xhrResult = await sbStrategyXHR(keywords, apiKey).catch((e) => {
+    console.error("[sb][xhr] Uncaught:", e);
+    return null;
+  });
+
+  if (xhrResult !== null) return xhrResult;
+
+  // Strategy B: Form fill (reliable fallback)
+  console.log("[sb] Falling back to form-fill strategy...");
+  return sbStrategyFormFill(keywords, apiKey).catch((e) => {
+    console.error("[sb][form] Uncaught:", e);
+    return [];
+  });
 }
 
 /**
@@ -379,7 +486,7 @@ async function scrapeWithScrapingBee(
  * The DataTables data array may contain HTML strings for each cell.
  * We extract plain text and URLs from them.
  */
-function parseOperacionRow(row: unknown, _keyword: string): RawTender | null {
+function parseOperacionRow(row: unknown): RawTender | null {
   // row can be array-of-strings or object
   let cells: string[] = [];
 
@@ -508,7 +615,7 @@ async function scrapeSICOES(
       }
       // result.data could be DataTables JSON rows — parse them
       for (const row of result.data) {
-        const t = parseOperacionRow(row, term);
+        const t = parseOperacionRow(row);
         if (t && !seen.has(t.cuce) && isVigente(t.estado)) {
           seen.add(t.cuce);
           allTenders.push(t);
