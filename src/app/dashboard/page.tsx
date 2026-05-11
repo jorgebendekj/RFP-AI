@@ -16,7 +16,6 @@ import {
   Shield,
   X,
   Plus,
-  Hourglass,
 } from "lucide-react";
 import {
   COMPANY_TYPES,
@@ -68,7 +67,7 @@ export default function DashboardPage() {
   );
   const settings = settingsData?.siceosSettings?.[0];
 
-  // Auto-create profile on first login (enabled: false = pending approval)
+  // Auto-create profile on first login
   useEffect(() => {
     if (user && profileData !== undefined && !profile) {
       const isAdmin = user.email === ADMIN_EMAIL;
@@ -77,7 +76,7 @@ export default function DashboardPage() {
           email: user.email!,
           name: user.email!.split("@")[0],
           role: isAdmin ? "admin" : "client",
-          enabled: isAdmin, // admin auto-approved
+          enabled: true,
           createdAt: Date.now(),
         })
       );
@@ -203,46 +202,6 @@ export default function DashboardPage() {
   if (!user) { if (typeof window !== "undefined") window.location.href = "/login"; return null; }
 
   const isAdmin = ADMIN_EMAIL && user.email === ADMIN_EMAIL;
-
-  // PENDING APPROVAL SCREEN
-  if (!isAdmin && profile && !profile.enabled) {
-    return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-        <div style={{ maxWidth: "420px", width: "100%", textAlign: "center" }}>
-          <div style={{
-            width: "64px", height: "64px", borderRadius: "50%",
-            background: "rgba(255,181,71,0.1)", border: "1px solid var(--warning)",
-            display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px",
-          }}>
-            <Hourglass size={28} color="var(--warning)" />
-          </div>
-          <h1 style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "12px" }}>
-            Acceso pendiente de aprobación
-          </h1>
-          <p style={{ color: "var(--muted)", fontSize: "0.875rem", lineHeight: "1.6", marginBottom: "32px" }}>
-            Tu cuenta <span style={{ color: "var(--accent)" }}>{user.email}</span> fue registrada
-            correctamente. El administrador recibirá una notificación y habilitará tu acceso pronto.
-          </p>
-          <div className="card" style={{ padding: "16px 20px", marginBottom: "24px", textAlign: "left" }}>
-            <div style={{ color: "var(--muted)", fontSize: "0.75rem", letterSpacing: "0.05em", marginBottom: "8px" }}>
-              QUÉ PASA AHORA
-            </div>
-            {[
-              "✓ Tu cuenta fue creada en el sistema",
-              "⏳ El administrador aprobará tu acceso",
-              "📧 Recibirás un correo cuando esté listo",
-            ].map((s) => (
-              <div key={s} style={{ fontSize: "0.8125rem", color: "var(--text)", padding: "4px 0" }}>{s}</div>
-            ))}
-          </div>
-          <button className="btn-ghost" onClick={signOut} style={{ display: "flex", alignItems: "center", gap: "6px", margin: "0 auto" }}>
-            <LogOut size={14} /> Cerrar sesión
-          </button>
-        </div>
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-      </div>
-    );
-  }
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
