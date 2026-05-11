@@ -155,7 +155,7 @@ export default function DashboardPage() {
     addLog("Iniciando escaneo de SICOES...");
     addLog(`Perfil: ${settings.companyType} · ${(settings.keywords as string[])?.length || 0} palabras clave`);
     try {
-      addLog("Conectando con motor de IA (Claude)...");
+      addLog("Leyendo caché de licitaciones (actualizado diariamente)...");
       const resp = await fetch("/api/sicoes/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -170,25 +170,15 @@ export default function DashboardPage() {
       if (!resp.ok) {
         const errData = await resp.json().catch(() => ({})) as {
           error?: string;
-          debug?: {
-            scrapingbeeKeyDetected?: boolean;
-            scrapingbeeKeyPrefix?: string | null;
-            elapsedMs?: number;
-            keywordsTried?: string[];
-            hint?: string;
-          };
+          source?: string;
         };
-        if (errData.debug) {
-          addLog(`◆ Diagnóstico:`);
-          addLog(`  · ScrapingBee key detectada: ${errData.debug.scrapingbeeKeyDetected ? "SÍ" : "NO"}${errData.debug.scrapingbeeKeyPrefix ? ` (empieza con "${errData.debug.scrapingbeeKeyPrefix}")` : ""}`);
-          addLog(`  · Tiempo total: ${errData.debug.elapsedMs}ms`);
-          addLog(`  · Palabras probadas: ${errData.debug.keywordsTried?.join(", ")}`);
-          if (errData.debug.hint) addLog(`  · ${errData.debug.hint}`);
-        }
+        if (errData.source) addLog(`  · ${errData.source}`);
         throw new Error(errData.error || `Error ${resp.status}`);
       }
-      const data = await resp.json() as ScanResult;
-      addLog(`✓ Escaneo completado · ${data.tenders?.length || 0} licitaciones encontradas`);
+      const data = await resp.json() as ScanResult & { cacheAge?: string };
+      if (data.cacheAge) addLog(`  · ${data.cacheAge}`);
+      addLog(`Analizando relevancia con Claude para tu perfil...`);
+      addLog(`✓ Escaneo completado · ${data.tenders?.length || 0} licitaciones relevantes`);
       setResult(data);
     } catch (e: unknown) {
       addLog(`✗ Error: ${e instanceof Error ? e.message : "Error desconocido"}`);
