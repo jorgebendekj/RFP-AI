@@ -247,25 +247,58 @@ async function main() {
 
     page = await context.newPage();
 
-    console.log(`[scraper] Navigating to ${SICOES_URL}`);
-    const navResp = await page.goto(SICOES_URL, {
+    // ── Step 1: Land on index.php to get a valid session + token ─────────────
+    // SICOES will redirect any direct access to convocatorias.php → index.php
+    // unless we include a valid token in the URL. The token lives in a hidden
+    // <input id="token"> on every page (see SICOES portal.js → irLink()).
+    console.log(`[scraper] Step 1: Navigating to portal index to obtain token...`);
+    const indexResp = await page.goto(`${SICOES_BASE}/portal/index.php`, {
       waitUntil: "domcontentloaded",
       timeout: 60000,
     });
-    console.log(`[scraper] Initial response: status=${navResp?.status()} url=${page.url()}`);
+    console.log(`[scraper] index.php → status=${indexResp?.status()} url=${page.url()}`);
 
     // Give Cloudflare Turnstile time to solve invisibly
-    console.log("[scraper] Waiting 8s for Turnstile to solve...");
-    await page.waitForTimeout(8000);
+    console.log("[scraper] Waiting 6s for Turnstile to solve...");
+    await page.waitForTimeout(6000);
 
-    // Try to detect the search form. If not found, dump debug info.
+    // Extract the token from the hidden input
+    const token = await page.evaluate(() => {
+      const el = document.querySelector('input#token, input[name="token"]') as HTMLInputElement | null;
+      return el?.value || "";
+    });
+
+    if (!token || token.length < 20) {
+      console.error(`[scraper] ✗ Could not extract token from index.php (got: "${token}")`);
+      console.error("[scraper] Cloudflare may have served a challenge page instead of the real index.");
+      await dumpDebug(page, "01-no-token");
+      throw new Error("Token extraction failed");
+    }
+    console.log(`[scraper] ✓ Token extracted: ${token.slice(0, 16)}...`);
+
+    // ── Step 2: Navigate to convocatorias.php WITH the token ─────────────────
+    const searchUrl = `${SICOES_URL}&token=${token}`;
+    console.log(`[scraper] Step 2: Navigating to search page with token...`);
+    const convResp = await page.goto(searchUrl, {
+      waitUntil: "domcontentloaded",
+      timeout: 60000,
+    });
+    console.log(`[scraper] convocatorias.php → status=${convResp?.status()} url=${page.url()}`);
+
+    // If we got redirected back to index.php, the token didn't work
+    if (page.url().includes("/index.php")) {
+      console.error("[scraper] ✗ Redirected back to index.php — token rejected by server");
+      await dumpDebug(page, "02-token-rejected");
+      throw new Error("Server rejected the token");
+    }
+
+    // Wait for the search form to be ready
     try {
       await page.waitForSelector('input[name="objetoContrato"]', { timeout: 30000 });
-      console.log(`[scraper] ✓ Search form detected. Final URL: ${page.url()}`);
+      console.log(`[scraper] ✓ Search form detected. URL: ${page.url()}`);
     } catch (selectorErr) {
       console.error("[scraper] ✗ Search form did NOT appear within 30s.");
-      console.error("[scraper] This typically means Cloudflare blocked the request.");
-      await dumpDebug(page, "01-form-not-found");
+      await dumpDebug(page, "02-form-not-found");
       throw selectorErr;
     }
 
