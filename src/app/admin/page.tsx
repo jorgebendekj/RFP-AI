@@ -9,12 +9,8 @@ import {
   Users,
   Bell,
   BellOff,
-  CheckCircle,
-  XCircle,
   ChevronDown,
   ChevronUp,
-  Clock,
-  UserCheck,
   UserX,
   Settings,
 } from "lucide-react";
@@ -32,8 +28,7 @@ export default function AdminPage() {
   const allProfiles = (data?.profiles || []) as Record<string, unknown>[];
   const allSettings = (data?.siceosSettings || []) as Record<string, unknown>[];
 
-  const pending = allProfiles.filter((p) => !p.enabled && p.role !== "admin");
-  const approved = allProfiles.filter((p) => p.enabled && p.role !== "admin");
+  const clients = allProfiles.filter((p) => p.role !== "admin");
 
   if (isLoading) {
     return (
@@ -47,10 +42,6 @@ export default function AdminPage() {
   if (!user || (ADMIN_EMAIL && user.email !== ADMIN_EMAIL)) {
     if (typeof window !== "undefined") window.location.href = "/dashboard";
     return null;
-  }
-
-  async function approveUser(profileId: string) {
-    await db.transact(db.tx.profiles[profileId].update({ enabled: true }));
   }
 
   async function revokeUser(profileId: string) {
@@ -87,10 +78,9 @@ export default function AdminPage() {
         {/* Stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "16px", marginBottom: "32px" }}>
           {[
-            { label: "Pendientes", value: pending.length, color: "var(--warning)", icon: <Clock size={18} /> },
-            { label: "Aprobados", value: approved.length, color: "var(--success)", icon: <UserCheck size={18} /> },
-            { label: "Total usuarios", value: allProfiles.filter(p => p.role !== "admin").length, color: "var(--accent)", icon: <Users size={18} /> },
-            { label: "Con notifs", value: allSettings.filter((s) => s.notifyEnabled).length, color: "var(--accent2)", icon: <Bell size={18} /> },
+            { label: "Total usuarios", value: clients.length, color: "var(--accent)", icon: <Users size={18} /> },
+            { label: "Con notifs", value: allSettings.filter((s) => s.notifyEnabled).length, color: "var(--warning)", icon: <Bell size={18} /> },
+            { label: "Configurados", value: allSettings.length, color: "var(--success)", icon: <Settings size={18} /> },
           ].map(({ label, value, color, icon }) => (
             <div key={label} className="card" style={{ padding: "20px 24px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", color, marginBottom: "8px" }}>
@@ -102,74 +92,22 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {/* PENDING APPROVALS */}
-        {pending.length > 0 && (
-          <div style={{ marginBottom: "32px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
-              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--warning)", animation: "pulse 2s infinite" }} />
-              <h2 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--warning)" }}>
-                Pendientes de aprobación ({pending.length})
-              </h2>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              {pending.map((p) => (
-                <div key={p.id as string} className="card" style={{ padding: "16px 20px", border: "1px solid rgba(255,181,71,0.3)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                    <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "rgba(255,181,71,0.1)", border: "1px solid rgba(255,181,71,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <span style={{ color: "var(--warning)", fontSize: "0.875rem", fontWeight: 700 }}>
-                        {(p.email as string)?.[0]?.toUpperCase() || "?"}
-                      </span>
-                    </div>
-                    <div>
-                      <div style={{ fontWeight: 500, marginBottom: "2px" }}>{p.email as string}</div>
-                      <div style={{ color: "var(--muted)", fontSize: "0.75rem" }}>
-                        Se registró {new Date(p.createdAt as number).toLocaleString("es-BO")}
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{ display: "flex", gap: "8px" }}>
-                    <button
-                      onClick={() => approveUser(p.id as string)}
-                      style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 16px", background: "rgba(0,214,143,0.1)", border: "1px solid var(--success)", borderRadius: "6px", color: "var(--success)", cursor: "pointer", fontFamily: "inherit", fontSize: "0.875rem", fontWeight: 600 }}
-                    >
-                      <CheckCircle size={14} /> Aprobar acceso
-                    </button>
-                    <button
-                      onClick={() => revokeUser(p.id as string)}
-                      style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 14px", background: "transparent", border: "1px solid var(--border)", borderRadius: "6px", color: "var(--muted)", cursor: "pointer", fontFamily: "inherit", fontSize: "0.875rem" }}
-                    >
-                      <XCircle size={14} /> Rechazar
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {pending.length === 0 && (
-          <div className="card" style={{ padding: "20px 24px", marginBottom: "32px", border: "1px solid rgba(0,214,143,0.2)", display: "flex", alignItems: "center", gap: "12px" }}>
-            <CheckCircle size={18} color="var(--success)" />
-            <span style={{ color: "var(--success)", fontSize: "0.875rem" }}>No hay solicitudes de acceso pendientes</span>
-          </div>
-        )}
-
-        {/* APPROVED CLIENTS */}
+        {/* CLIENTS */}
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
             <h2 style={{ fontSize: "1rem", fontWeight: 600, display: "flex", alignItems: "center", gap: "8px" }}>
-              <UserCheck size={16} color="var(--success)" />
-              Clientes aprobados ({approved.length})
+              <Users size={16} color="var(--accent)" />
+              Usuarios registrados ({clients.length})
             </h2>
           </div>
 
-          {approved.length === 0 ? (
+          {clients.length === 0 ? (
             <div className="card" style={{ padding: "40px", textAlign: "center", color: "var(--muted)" }}>
-              Aún no hay clientes aprobados. Aprobá las solicitudes de arriba.
+              Aún no hay usuarios registrados.
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              {approved.map((p) => {
+              {clients.map((p) => {
                 const userSettings = getSettingsForUser(p.email) || getSettingsForUser(p.id);
                 return (
                   <ClientRow
@@ -185,10 +123,7 @@ export default function AdminPage() {
         </div>
       </main>
 
-      <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
-      `}</style>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
