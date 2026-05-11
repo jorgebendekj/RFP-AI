@@ -58,7 +58,15 @@ export default function LoginPage() {
     try {
       await db.auth.signInWithMagicCode({ email: email.trim(), code: code.trim() });
     } catch (e: unknown) {
-      setErr(e instanceof Error ? e.message : "Código incorrecto");
+      const msg = e instanceof Error ? e.message : "";
+      // This IDB error fires when auth succeeds but the page navigation triggered
+      // by useAuth closes the IndexedDB connection before InstantDB finishes
+      // persisting the session. Auth was successful — redirect to dashboard.
+      if (msg.includes("IDBDatabase") || msg.includes("database connection is closing")) {
+        window.location.href = "/dashboard";
+        return;
+      }
+      setErr(msg || "Código incorrecto");
     } finally {
       setSending(false);
     }
