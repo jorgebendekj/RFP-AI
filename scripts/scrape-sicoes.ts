@@ -1,27 +1,27 @@
 /**
  * SICOES Scraper — runs daily via GitHub Actions (or locally).
  *
- * Uses Playwright (real Chromium) to bypass Cloudflare Turnstile that blocks
- * server-side fetches. Scrapes all unique keywords across all configured users,
- * stores results in InstantDB → the Vercel /api/sicoes/scan endpoint reads from
- * this cache to give users instant filtered+scored results.
+ * Uses `patchright` (a Playwright fork with anti-detection patches) to bypass
+ * Cloudflare Turnstile that blocks server-side fetches AND vanilla Playwright.
+ * Scrapes all unique keywords across all configured users, stores results in
+ * InstantDB → the Vercel /api/sicoes/scan endpoint reads from this cache for
+ * instant filtered+scored results.
  *
  * Run locally:
- *   INSTANTDB_ADMIN_TOKEN=xxx npx tsx scripts/scrape-sicoes.ts
+ *   $env:INSTANTDB_ADMIN_TOKEN = "xxx"; npx tsx scripts/scrape-sicoes.ts
  *
- * Run in CI:
- *   See .github/workflows/scrape-sicoes.yml
+ * Run in CI: see .github/workflows/scrape-sicoes.yml
  */
 
-import { chromium, type Page, type Response as PWResponse } from "playwright";
+import { chromium, type Page, type Response as PWResponse } from "patchright";
 import { init, id } from "@instantdb/admin";
+import * as fs from "node:fs/promises";
+import * as path from "node:path";
 
 const APP_ID = "5fe5517c-1f4b-400c-ab57-c3300f8c8ced";
 const SICOES_BASE = "https://sicoes.gob.bo";
 const SICOES_URL = `${SICOES_BASE}/portal/contrataciones/busqueda/convocatorias.php?tipo=convNacional`;
 
-// Default keywords covering all 8 supported company types — guarantees the
-// cache is populated even before any user has configured their settings.
 const DEFAULT_KEYWORDS = [
   // Tecnología
   "software", "sistema informatico", "desarrollo web", "aplicacion", "hardware",
@@ -52,8 +52,6 @@ interface RawTender {
   form100Url?: string;
 }
 
-// ─── InstantDB setup ────────────────────────────────────────────────────────
-
 const ADMIN_TOKEN = process.env.INSTANTDB_ADMIN_TOKEN;
 if (!ADMIN_TOKEN) {
   console.error("[scraper] FATAL: INSTANTDB_ADMIN_TOKEN env var is required");
@@ -61,7 +59,37 @@ if (!ADMIN_TOKEN) {
 }
 const db = init({ appId: APP_ID, adminToken: ADMIN_TOKEN });
 
-// ─── HTML parsing helpers (mirrors src/app/api/sicoes/scan/route.ts) ────────
+// ─── Debug helpers ──────────────────────────────────────────────────────────
+
+const DEBUG_DIR = path.join(process.cwd(), "scraper-debug");
+
+async function ensureDebugDir() {
+  await fs.mkdir(DEBUG_DIR, { recursive: true }).catch(() => {});
+}
+
+async function dumpDebug(page: Page, name: string) {
+  try {
+    await ensureDebugDir();
+    const url = page.url();
+    const title = await page.title().catch(() => "");
+    const html = await page.content().catch(() => "");
+    await page.screenshot({
+      path: path.join(DEBUG_DIR, `${name}.png`),
+      fullPage: true,
+    }).catch(() => {});
+    await fs.writeFile(path.join(DEBUG_DIR, `${name}.html`), html);
+    await fs.writeFile(
+      path.join(DEBUG_DIR, `${name}.txt`),
+      `URL: ${url}\nTITLE: ${title}\n\nFirst 500 chars of body:\n${html.slice(0, 500)}`
+    );
+    console.log(`[scraper] DEBUG dumped to scraper-debug/${name}.*`);
+    console.log(`[scraper] DEBUG url=${url} title="${title}" html_len=${html.length}`);
+  } catch (e) {
+    console.error("[scraper] dumpDebug failed:", e);
+  }
+}
+
+// ─── HTML parsing ───────────────────────────────────────────────────────────
 
 function htmlText(html: string): string {
   return html
@@ -130,7 +158,7 @@ function parseSICOESTable(html: string): RawTender[] {
   return tenders;
 }
 
-// ─── Keyword aggregation from InstantDB users ───────────────────────────────
+// ─── Keyword aggregation ────────────────────────────────────────────────────
 
 async function getAllKeywords(): Promise<string[]> {
   const set = new Set<string>(DEFAULT_KEYWORDS.map((k) => k.toLowerCase()));
@@ -149,49 +177,54 @@ async function getAllKeywords(): Promise<string[]> {
   return Array.from(set);
 }
 
-// ─── Single-keyword search via Playwright ───────────────────────────────────
+// ─── Single-keyword search ──────────────────────────────────────────────────
 
 async function searchKeyword(page: Page, keyword: string): Promise<RawTender[]> {
-  // Clear previous search
   await page.fill('input[name="objetoContrato"]', "");
   await page.fill('input[name="objetoContrato"]', keyword);
 
-  // Ensure "Sólo Vigentes" radio is selected (r1=11)
   await page.evaluate(() => {
     const radio = document.querySelector('input[name="r1"][value="11"]') as HTMLInputElement | null;
     if (radio && !radio.checked) radio.click();
   });
 
-  // Click search button — busqueda.js intercepts and triggers DataTables AJAX
   await Promise.all([
     page.waitForResponse(
       (r: PWResponse) => r.url().includes("/operacion.php") && r.request().method() === "POST",
       { timeout: 20000 }
     ).catch(() => null),
-    page.click(".busquedaForm:has-text('Buscar')").catch(() => page.click(".busquedaForm")),
+    page.click(".busquedaForm").catch(() => null),
   ]);
 
-  // Give DataTables time to render the rows into the DOM
   await page.waitForTimeout(2500);
-
   const html = await page.content();
   return parseSICOESTable(html);
 }
 
-// ─── Main scrape orchestration ──────────────────────────────────────────────
+// ─── Main ───────────────────────────────────────────────────────────────────
 
 async function main() {
   const t0 = Date.now();
   console.log(`[scraper] Starting at ${new Date().toISOString()}`);
+  console.log(`[scraper] Using patchright (Playwright with anti-detection patches)`);
 
   const keywords = await getAllKeywords();
 
+  // patchright is a drop-in replacement for playwright with stealth patches:
+  // - Removes navigator.webdriver
+  // - Patches Chrome runtime detection
+  // - Realistic user-agent and headers
+  // - Bypasses most Cloudflare bot checks
   const browser = await chromium.launch({
     headless: true,
     args: [
       "--disable-blink-features=AutomationControlled",
       "--no-sandbox",
       "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-accelerated-2d-canvas",
+      "--no-first-run",
+      "--disable-gpu",
     ],
   });
 
@@ -199,6 +232,7 @@ async function main() {
   let keywordsSucceeded = 0;
   let keywordsFailed = 0;
 
+  let page: Page | null = null;
   try {
     const context = await browser.newContext({
       userAgent:
@@ -206,19 +240,38 @@ async function main() {
       viewport: { width: 1920, height: 1080 },
       locale: "es-BO",
       timezoneId: "America/La_Paz",
+      extraHTTPHeaders: {
+        "Accept-Language": "es-BO,es;q=0.9,en;q=0.8",
+      },
     });
 
-    const page = await context.newPage();
+    page = await context.newPage();
 
     console.log(`[scraper] Navigating to ${SICOES_URL}`);
-    await page.goto(SICOES_URL, { waitUntil: "domcontentloaded", timeout: 60000 });
+    const navResp = await page.goto(SICOES_URL, {
+      waitUntil: "domcontentloaded",
+      timeout: 60000,
+    });
+    console.log(`[scraper] Initial response: status=${navResp?.status()} url=${page.url()}`);
 
-    // Wait for the search form (which means the page loaded past Turnstile)
-    await page.waitForSelector('input[name="objetoContrato"]', { timeout: 45000 });
-    console.log("[scraper] Search form ready, waiting for Turnstile + initial AJAX...");
+    // Give Cloudflare Turnstile time to solve invisibly
+    console.log("[scraper] Waiting 8s for Turnstile to solve...");
+    await page.waitForTimeout(8000);
 
-    // Initial listarBusqueda() runs on document ready — wait for it to settle
-    await page.waitForTimeout(6000);
+    // Try to detect the search form. If not found, dump debug info.
+    try {
+      await page.waitForSelector('input[name="objetoContrato"]', { timeout: 30000 });
+      console.log(`[scraper] ✓ Search form detected. Final URL: ${page.url()}`);
+    } catch (selectorErr) {
+      console.error("[scraper] ✗ Search form did NOT appear within 30s.");
+      console.error("[scraper] This typically means Cloudflare blocked the request.");
+      await dumpDebug(page, "01-form-not-found");
+      throw selectorErr;
+    }
+
+    // Initial listarBusqueda() AJAX needs to settle
+    console.log("[scraper] Waiting 5s for initial AJAX...");
+    await page.waitForTimeout(5000);
 
     for (const keyword of keywords) {
       try {
@@ -235,10 +288,16 @@ async function main() {
       } catch (err) {
         console.error(`[scraper] "${keyword}" failed:`, err instanceof Error ? err.message : err);
         keywordsFailed++;
+        if (keywordsFailed === 1) await dumpDebug(page, `02-keyword-fail-${keyword}`);
       }
     }
-  } finally {
+  } catch (err) {
+    console.error("[scraper] Top-level error:", err);
+    if (page) await dumpDebug(page, "99-fatal");
     await browser.close();
+    process.exit(1);
+  } finally {
+    await browser.close().catch(() => {});
   }
 
   const tendersArray = Array.from(allTenders.values());
@@ -250,13 +309,12 @@ async function main() {
     process.exit(1);
   }
 
-  // ── Replace cache in InstantDB ────────────────────────────────────────────
+  // Replace cache
   console.log("[scraper] Updating InstantDB cache...");
   try {
     const oldRes = await db.query({ siceosTenders: {} });
     const oldTenders = (oldRes.siceosTenders as Array<{ id: string }>) || [];
     if (oldTenders.length > 0) {
-      // Delete in batches to avoid huge transactions
       const batchSize = 100;
       for (let i = 0; i < oldTenders.length; i += batchSize) {
         const batch = oldTenders.slice(i, i + batchSize);
@@ -265,7 +323,6 @@ async function main() {
       console.log(`[scraper] Cleared ${oldTenders.length} old cached tenders`);
     }
 
-    // Insert new tenders in batches
     const scrapedAt = Date.now();
     const txOps = tendersArray.map((t) =>
       db.tx.siceosTenders[id()].update({
@@ -288,7 +345,6 @@ async function main() {
     }
     console.log(`[scraper] Inserted ${tendersArray.length} new cached tenders`);
 
-    // Update metadata (single record, upsert pattern)
     const metaRes = await db.query({ siceosScrapeMetadata: {} });
     const meta = (metaRes.siceosScrapeMetadata as Array<{ id: string }>) || [];
     const metadataPayload = {

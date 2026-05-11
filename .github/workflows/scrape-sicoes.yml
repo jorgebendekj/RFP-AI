@@ -1,7 +1,7 @@
 name: Scrape SICOES
 
 # Runs daily at 10:00 UTC = 06:00 Bolivia (UTC-4).
-# Also exposes a manual trigger via GitHub UI ("Run workflow").
+# Manual trigger via GitHub UI ("Run workflow") also enabled.
 on:
   schedule:
     - cron: "0 10 * * *"
@@ -26,21 +26,20 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
-      - name: Install Playwright Chromium (with system deps)
-        run: npx playwright install --with-deps chromium
+      - name: Install patchright Chromium (with system deps)
+        # patchright shares Playwright's browser binaries
+        run: npx patchright install --with-deps chromium
 
       - name: Run SICOES scraper
         env:
           INSTANTDB_ADMIN_TOKEN: ${{ secrets.INSTANTDB_ADMIN_TOKEN }}
         run: npx tsx scripts/scrape-sicoes.ts
 
-      - name: Upload Playwright trace on failure (for debugging)
+      - name: Upload debug screenshots/HTML on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-trace
-          path: |
-            test-results/
-            playwright-report/
-          if-no-files-found: ignore
+          name: scraper-debug
+          path: scraper-debug/
+          if-no-files-found: warn
           retention-days: 7
