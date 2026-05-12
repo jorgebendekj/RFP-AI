@@ -98,6 +98,7 @@ export default function DashboardPage() {
     if (!user) return;
     setIsSaving(true);
     try {
+      const wasNotifyEnabled = (settings?.notifyEnabled as boolean) ?? false;
       const payload = {
         userId: user.id,
         userEmail: user.email!,
@@ -113,6 +114,22 @@ export default function DashboardPage() {
       } else {
         await db.transact(db.tx.siceosSettings[id()].update(payload));
       }
+
+      // When notifications are enabled for the first time (or re-enabled),
+      // send an immediate preview email so the user knows it's working.
+      if (formNotify && !wasNotifyEnabled) {
+        fetch("/api/user/send-preview", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: user.id,
+            userEmail: user.email,
+            companyType: formCompanyType,
+            keywords: formKeywords,
+          }),
+        }).catch(() => {});
+      }
+
       setShowSettings(false);
     } finally {
       setIsSaving(false);
@@ -394,7 +411,7 @@ export default function DashboardPage() {
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px", background: "var(--bg2)", borderRadius: "8px", marginBottom: "24px" }}>
               <div>
                 <div style={{ fontWeight: 500, marginBottom: "4px" }}>Notificaciones diarias</div>
-                <div style={{ color: "var(--muted)", fontSize: "0.8125rem" }}>Recibir resumen a las 8:00 AM (Bolivia)</div>
+                <div style={{ color: "var(--muted)", fontSize: "0.8125rem" }}>Reporte automático cada día a las 9:00 AM (Bolivia). Al activar, te enviamos un email ahora.</div>
               </div>
               <button type="button" onClick={() => setFormNotify(!formNotify)}
                 style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 16px", border: `1px solid ${formNotify ? "var(--success)" : "var(--border)"}`, background: formNotify ? "rgba(0,214,143,0.1)" : "transparent", borderRadius: "6px", color: formNotify ? "var(--success)" : "var(--muted)", cursor: "pointer", fontFamily: "inherit", fontSize: "0.875rem" }}>
