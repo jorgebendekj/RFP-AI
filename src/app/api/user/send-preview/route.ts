@@ -192,7 +192,7 @@ export async function POST(req: NextRequest) {
 
   const Anthropic = (await import("@anthropic-ai/sdk")).default;
   const { Resend } = await import("resend");
-  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY!, maxRetries: 4 });
   const resend = new Resend(process.env.RESEND_API_KEY!);
 
   try {

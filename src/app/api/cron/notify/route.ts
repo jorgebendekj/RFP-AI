@@ -239,7 +239,7 @@ export async function GET(req: NextRequest) {
   const Anthropic = (await import("@anthropic-ai/sdk")).default;
   const { Resend } = await import("resend");
 
-  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY!, maxRetries: 4 });
   const resend = new Resend(process.env.RESEND_API_KEY!);
 
   // Resend sender — uses Resend's verified shared sender if no custom domain.
@@ -273,7 +273,11 @@ export async function GET(req: NextRequest) {
     let notified = 0;
     const errors: string[] = [];
 
-    for (const setting of settings) {
+    for (let i = 0; i < settings.length; i++) {
+      const setting = settings[i];
+      // Stagger AI calls to avoid Anthropic 529 overloaded errors
+      if (i > 0) await new Promise((r) => setTimeout(r, 3000));
+
       try {
         const recipientEmail = setting.userEmail;
         if (!recipientEmail) continue;
