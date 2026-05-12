@@ -13,12 +13,31 @@ import {
   ChevronUp,
   UserX,
   Settings,
+  Send,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 import { COMPANY_TYPES, KEYWORD_PRESETS, type CompanyType } from "@/lib/companyKeywords";
+
+interface NotifyResult {
+  ok: boolean;
+  fromAddress?: string;
+  usingDefaultSender?: boolean;
+  senderWarning?: string;
+  total?: number;
+  notified?: number;
+  cacheSize?: number;
+  message?: string;
+  error?: string;
+  results?: Array<{ email: string; status: "sent" | "error"; tenders?: number; error?: string }>;
+}
 
 export default function AdminPage() {
   const { isLoading, user } = db.useAuth();
   const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || "";
+  const [sending, setSending] = useState(false);
+  const [notifyResult, setNotifyResult] = useState<NotifyResult | null>(null);
 
   // Load all profiles and settings
   const { data } = db.useQuery(
@@ -42,6 +61,24 @@ export default function AdminPage() {
   if (!user || (ADMIN_EMAIL && user.email !== ADMIN_EMAIL)) {
     if (typeof window !== "undefined") window.location.href = "/dashboard";
     return null;
+  }
+
+  async function sendNotifications() {
+    setSending(true);
+    setNotifyResult(null);
+    try {
+      const res = await fetch("/api/admin/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ adminEmail: user!.email }),
+      });
+      const data = await res.json() as NotifyResult;
+      setNotifyResult(data);
+    } catch (e) {
+      setNotifyResult({ ok: false, error: e instanceof Error ? e.message : "Error de red" });
+    } finally {
+      setSending(false);
+    }
   }
 
   async function revokeUser(profileId: string) {
@@ -75,6 +112,65 @@ export default function AdminPage() {
       </header>
 
       <main style={{ padding: "32px 24px", maxWidth: "1000px", margin: "0 auto" }}>
+
+        {/* Notification trigger */}
+        <div className="card" style={{ padding: "20px 24px", marginBottom: "24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
+          <div>
+            <div style={{ fontWeight: 600, marginBottom: "4px" }}>Notificaciones por email</div>
+            <div style={{ color: "var(--muted)", fontSize: "0.8125rem" }}>
+              Enviá ahora el resumen diario de SICOES a todos los usuarios con notificaciones activas
+            </div>
+          </div>
+          <button
+            onClick={sendNotifications}
+            disabled={sending}
+            style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 20px", background: sending ? "transparent" : "rgba(0,229,195,0.1)", border: "1px solid var(--accent)", borderRadius: "6px", color: "var(--accent)", cursor: sending ? "not-allowed" : "pointer", fontFamily: "inherit", fontSize: "0.875rem", fontWeight: 600, opacity: sending ? 0.6 : 1 }}
+          >
+            {sending ? <><Radar size={14} style={{ animation: "spin 1s linear infinite" }} /> Enviando...</> : <><Send size={14} /> Enviar notificaciones ahora</>}
+          </button>
+        </div>
+
+        {/* Notify result */}
+        {notifyResult && (
+          <div className="card" style={{ padding: "20px 24px", marginBottom: "24px", border: `1px solid ${notifyResult.ok ? "rgba(0,214,143,0.3)" : "rgba(255,77,109,0.3)"}` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
+              {notifyResult.ok ? <CheckCircle size={16} color="var(--success)" /> : <XCircle size={16} color="var(--danger)" />}
+              <span style={{ fontWeight: 600, color: notifyResult.ok ? "var(--success)" : "var(--danger)", fontSize: "0.875rem" }}>
+                {notifyResult.ok ? `${notifyResult.notified} de ${notifyResult.total} emails enviados · ${notifyResult.cacheSize} licitaciones en caché` : (notifyResult.message || notifyResult.error || "Error al enviar")}
+              </span>
+            </div>
+
+            {notifyResult.fromAddress && (
+              <div style={{ fontSize: "0.75rem", color: "var(--muted)", marginBottom: notifyResult.senderWarning ? "8px" : "0" }}>
+                Enviado desde: <span style={{ color: "var(--text)", fontFamily: "monospace" }}>{notifyResult.fromAddress}</span>
+              </div>
+            )}
+
+            {notifyResult.senderWarning && (
+              <div style={{ display: "flex", gap: "8px", padding: "10px 14px", background: "rgba(255,181,71,0.08)", border: "1px solid rgba(255,181,71,0.3)", borderRadius: "6px", marginBottom: "12px" }}>
+                <AlertTriangle size={14} color="var(--warning)" style={{ flexShrink: 0, marginTop: "1px" }} />
+                <span style={{ fontSize: "0.8125rem", color: "var(--warning)", lineHeight: "1.5" }}>{notifyResult.senderWarning}</span>
+              </div>
+            )}
+
+            {notifyResult.results && notifyResult.results.length > 0 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "8px" }}>
+                {notifyResult.results.map((r) => (
+                  <div key={r.email} style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "0.8125rem" }}>
+                    {r.status === "sent"
+                      ? <CheckCircle size={12} color="var(--success)" />
+                      : <XCircle size={12} color="var(--danger)" />}
+                    <span style={{ color: "var(--text)" }}>{r.email}</span>
+                    {r.status === "sent"
+                      ? <span style={{ color: "var(--muted)" }}>{r.tenders} licitaciones</span>
+                      : <span style={{ color: "var(--danger)" }}>{r.error}</span>}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "16px", marginBottom: "32px" }}>
           {[
