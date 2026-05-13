@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminDb } from "@/lib/instantAdmin";
+import { id } from "@instantdb/admin";
+
+export const maxDuration = 300;
 
 interface CachedTender {
   id: string;
@@ -279,6 +282,20 @@ export async function POST(req: NextRequest) {
         });
       }
     }
+
+    // Persist run log
+    try {
+      await adminDb.transact(
+        adminDb.tx.sicoesNotifyLogs[id()].update({
+          ranAt: Date.now(),
+          trigger: "manual",
+          total: settings.length,
+          notified,
+          errors: results.filter((r) => r.status === "error").map((r) => `${r.email}: ${r.error}`),
+          cacheSize: cache.length,
+        })
+      );
+    } catch { /* non-critical */ }
 
     return NextResponse.json({
       ok: true,
