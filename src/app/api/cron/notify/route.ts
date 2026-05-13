@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminDb } from "@/lib/instantAdmin";
+import { id } from "@instantdb/admin";
+
+// Prevent Vercel from killing the function mid-run when there are many users.
+// Default timeout (10s Hobby / 60s Pro) is not enough for multi-user AI scoring.
+export const maxDuration = 300;
 
 /**
  * Daily email notification cron — runs at 9:00 AM Bolivia (13:00 UTC) via
@@ -321,21 +326,25 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({
-      ok: true,
-      total: settings.length,
-      notified,
-      cacheSize: cache.length,
-      errors,
-    });
+    // Persist run log so admin panel can show "last automatic send"
+    try {
+      await adminDb.transact(
+        adminDb.tx.sicoesNotifyLogs[id()].update({
+          ranAt: Date.now(),
+          trigger: "cron",
+          total: settings.length,
+          notified,
+          errors,
+          cacheSize: cache.length,
+        })
+      );
+    } catch { /* non-critical */ }
+
+    return NextResponse.json({ ok: true, total: settings.length, notified, cacheSize: cache.length, errors });
   } catch (e) {
     console.error("[cron/notify]", e);
-    return NextResponse.json(
-      { error: e instanceof Error ? e.message : "Error interno" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: e instanceof Error ? e.message : "Error interno" }, { status: 500 });
   }
 }
 
-// Keep POST for backward compat / manual triggering with curl
 export const POST = GET;

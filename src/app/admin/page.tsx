@@ -17,6 +17,8 @@ import {
   AlertTriangle,
   CheckCircle,
   XCircle,
+  Clock,
+  RefreshCw,
 } from "lucide-react";
 import { COMPANY_TYPES, KEYWORD_PRESETS, type CompanyType } from "@/lib/companyKeywords";
 
@@ -39,15 +41,24 @@ export default function AdminPage() {
   const [sending, setSending] = useState(false);
   const [notifyResult, setNotifyResult] = useState<NotifyResult | null>(null);
 
-  // Load all profiles and settings
+  // Load all profiles, settings, and last cron run log
   const { data } = db.useQuery(
-    user ? { profiles: {}, siceosSettings: {} } : null
+    user ? { profiles: {}, siceosSettings: {}, sicoesNotifyLogs: {} } : null
   );
 
   const allProfiles = (data?.profiles || []) as Record<string, unknown>[];
   const allSettings = (data?.siceosSettings || []) as Record<string, unknown>[];
+  const allLogs = (data?.sicoesNotifyLogs || []) as Record<string, unknown>[];
 
   const clients = allProfiles.filter((p) => p.role !== "admin");
+
+  const lastCronRun = allLogs
+    .filter((l) => l.trigger === "cron")
+    .sort((a, b) => (b.ranAt as number) - (a.ranAt as number))[0] ?? null;
+
+  const lastManualRun = allLogs
+    .filter((l) => l.trigger !== "cron")
+    .sort((a, b) => (b.ranAt as number) - (a.ranAt as number))[0] ?? null;
 
   if (isLoading) {
     return (
@@ -170,6 +181,53 @@ export default function AdminPage() {
             )}
           </div>
         )}
+
+        {/* Last run status */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px", marginBottom: "24px" }}>
+          {/* Automatic cron */}
+          <div className="card" style={{ padding: "18px 20px", display: "flex", alignItems: "flex-start", gap: "12px" }}>
+            <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: lastCronRun ? "rgba(0,214,143,0.1)" : "rgba(74,96,117,0.15)", border: `1px solid ${lastCronRun ? "var(--success)" : "var(--border)"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <RefreshCw size={16} color={lastCronRun ? "var(--success)" : "var(--muted)"} />
+            </div>
+            <div>
+              <div style={{ fontSize: "0.75rem", color: "var(--muted)", letterSpacing: "0.05em", marginBottom: "4px" }}>ENVÍO AUTOMÁTICO (CRON · 9AM)</div>
+              {lastCronRun ? (
+                <>
+                  <div style={{ fontWeight: 600, fontSize: "0.875rem", color: "var(--success)", marginBottom: "2px" }}>
+                    {lastCronRun.notified as number} de {lastCronRun.total as number} emails enviados
+                  </div>
+                  <div style={{ color: "var(--muted)", fontSize: "0.75rem" }}>
+                    {new Date(lastCronRun.ranAt as number).toLocaleString("es-BO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                  </div>
+                </>
+              ) : (
+                <div style={{ color: "var(--muted)", fontSize: "0.8125rem" }}>Todavía no se ejecutó — se activa automáticamente a las 9:00 AM Bolivia</div>
+              )}
+            </div>
+          </div>
+
+          {/* Manual trigger */}
+          <div className="card" style={{ padding: "18px 20px", display: "flex", alignItems: "flex-start", gap: "12px" }}>
+            <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: lastManualRun ? "rgba(0,229,195,0.1)" : "rgba(74,96,117,0.15)", border: `1px solid ${lastManualRun ? "var(--accent)" : "var(--border)"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Send size={16} color={lastManualRun ? "var(--accent)" : "var(--muted)"} />
+            </div>
+            <div>
+              <div style={{ fontSize: "0.75rem", color: "var(--muted)", letterSpacing: "0.05em", marginBottom: "4px" }}>ÚLTIMO ENVÍO MANUAL</div>
+              {lastManualRun ? (
+                <>
+                  <div style={{ fontWeight: 600, fontSize: "0.875rem", marginBottom: "2px" }}>
+                    {lastManualRun.notified as number} de {lastManualRun.total as number} emails enviados
+                  </div>
+                  <div style={{ color: "var(--muted)", fontSize: "0.75rem" }}>
+                    {new Date(lastManualRun.ranAt as number).toLocaleString("es-BO", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                  </div>
+                </>
+              ) : (
+                <div style={{ color: "var(--muted)", fontSize: "0.8125rem" }}>Ninguno todavía</div>
+              )}
+            </div>
+          </div>
+        </div>
 
         {/* Stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "16px", marginBottom: "32px" }}>
