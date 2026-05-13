@@ -54,7 +54,7 @@ export const metadata: Metadata = {
       "Monitoreá automáticamente las licitaciones del portal SICOES con Inteligencia Artificial. Recibí cada mañana las oportunidades más relevantes para tu empresa en Bolivia.",
     images: [
       {
-        url: "/og-image.png",
+        url: "/opengraph-image",
         width: 1200,
         height: 630,
         alt: "SICOES Monitor — Licitaciones Bolivia con IA",
@@ -66,7 +66,11 @@ export const metadata: Metadata = {
     title: "SICOES Monitor · Licitaciones Bolivia con IA",
     description:
       "Monitoreá las licitaciones de SICOES automáticamente con IA. Alertas diarias para empresas bolivianas.",
-    images: ["/og-image.png"],
+    images: ["/opengraph-image"],
+  },
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/icon.svg" }],
   },
 };
 
