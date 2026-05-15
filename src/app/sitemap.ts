@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://www.ribentek.site";
+  const base = "https://www.sicoesmonitor.com";
   const now = new Date();
 
   return [

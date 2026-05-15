@@ -181,7 +181,7 @@ export async function GET(_req: NextRequest) {
             padding: "0 64px",
           }}
         >
-          <span style={{ color: "#4A6075", fontSize: "16px" }}>www.ribentek.site</span>
+          <span style={{ color: "#4A6075", fontSize: "16px" }}>www.sicoesmonitor.com</span>
           <span style={{ color: "#4A6075", fontSize: "16px" }}>
             Powered by{" "}
             <span style={{ color: "#00E5C3", fontWeight: 600 }}>Ribentek</span>

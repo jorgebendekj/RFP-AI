@@ -8,7 +8,7 @@ const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-mono",
 });
 
-const siteUrl = "https://www.ribentek.site";
+const siteUrl = "https://www.sicoesmonitor.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

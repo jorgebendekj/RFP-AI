@@ -148,7 +148,7 @@ function buildEmailHtml(email: string, companyType: string, tenders: ScoredTende
 
     <div style="text-align:center;color:#4A6075;font-size:11px;line-height:1.6;">
       <p style="margin:0 0 4px 0;">SICOES Monitor · Bolivia</p>
-      <p style="margin:0;">Editá tus palabras clave o pausá las notificaciones desde <a href="https://rfp-ai.vercel.app/dashboard" style="color:#00E5C3;text-decoration:none;">tu dashboard</a></p>
+      <p style="margin:0;">Editá tus palabras clave o pausá las notificaciones desde <a href="https://www.sicoesmonitor.com/dashboard" style="color:#00E5C3;text-decoration:none;">tu dashboard</a></p>
     </div>
   </div>
 </body></html>`;
@@ -168,7 +168,7 @@ function buildNoMatchHtml(email: string, companyType: string, total: number, isP
       <p style="font-size:16px;margin:0 0 16px 0;">Hola ${email},</p>
       <p style="margin:0 0 16px 0;">Hoy no hay licitaciones VIGENTES en SICOES que coincidan con tus palabras clave para <strong style="color:#00E5C3;">${companyType}</strong>.</p>
       <p style="color:#4A6075;font-size:13px;margin:0 0 16px 0;">SICOES tiene ${total} licitaciones vigentes en total — probá ajustar tus palabras clave.</p>
-      <p style="margin:0;"><a href="https://rfp-ai.vercel.app/dashboard" style="color:#00E5C3;">Actualizar palabras clave</a></p>
+      <p style="margin:0;"><a href="https://www.sicoesmonitor.com/dashboard" style="color:#00E5C3;">Actualizar palabras clave</a></p>
     </div>
   </div>
 </body></html>`;

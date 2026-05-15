@@ -202,7 +202,7 @@ export default function OGImage() {
           }}
         >
           <span style={{ color: "#4A6075", fontSize: "16px" }}>
-            www.ribentek.site
+            www.sicoesmonitor.com
           </span>
           <span style={{ color: "#4A6075", fontSize: "16px" }}>
             Powered by{" "}
