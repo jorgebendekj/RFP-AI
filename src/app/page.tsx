@@ -273,7 +273,7 @@ export default function LandingPage() {
           <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", justifyContent: "center" }}>
             {[
               "Construcción", "Tecnología e IT", "Salud y Farmacia", "Consultoría",
-              "Alimentos y Servicios", "Transporte", "Educación", "Equipamiento",
+              "Servicios Generales", "Mantenimiento", "Transporte y Logística", "Educación",
             ].map((cat) => (
               <span key={cat} className="chip" style={{ fontSize: "0.875rem", padding: "8px 18px", cursor: "default" }}>
                 {cat}
