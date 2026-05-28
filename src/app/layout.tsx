@@ -87,55 +87,38 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd = [
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: "SICOES Monitor",
-    description:
-      "Sistema de monitoreo automático de licitaciones del portal SICOES (sicoes.gob.bo) con análisis de Inteligencia Artificial para empresas bolivianas. Envía alertas diarias personalizadas por email a las 9am hora Bolivia.",
-    url: siteUrl,
-    applicationCategory: "BusinessApplication",
-    operatingSystem: "Web",
-    offers: { "@type": "Offer", price: "0", priceCurrency: "BOB", availability: "https://schema.org/InStock" },
-    creator: { "@type": "Organization", name: "Ribentek", url: "https://ribentek.com" },
-    keywords: "SICOES, licitaciones Bolivia, contrataciones estatales, sicoes.gob.bo, licitaciones públicas Bolivia",
-    inLanguage: "es-BO",
-    availableLanguage: "Spanish",
-    areaServed: { "@type": "Country", name: "Bolivia" },
-    featureList: [
-      "Escaneo diario del portal SICOES",
-      "Análisis con Inteligencia Artificial Claude",
-      "Alertas por email a las 9am hora Bolivia",
-      "Score de relevancia por empresa",
-      "Filtros por rubro y palabras clave",
-    ],
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "Ribentek",
-    url: "https://ribentek.com",
-    description:
-      "Empresa tecnológica especializada en automatización e Inteligencia Artificial con más de 25 proyectos implementados en 5 países y 6 industrias de Latinoamérica.",
-    numberOfEmployees: { "@type": "QuantitativeValue", minValue: 1 },
-    knowsAbout: ["Inteligencia Artificial", "Automatización", "Software empresarial", "Licitaciones Bolivia"],
-    areaServed: ["Bolivia", "Argentina", "Chile", "Perú", "México"],
-    sameAs: ["https://ribentek.com"],
-  },
-];
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "SICOES Monitor",
+  description:
+    "Sistema de monitoreo automático de licitaciones del portal SICOES (sicoes.gob.bo) con análisis de Inteligencia Artificial para empresas bolivianas. Envía alertas diarias personalizadas por email a las 9am hora Bolivia.",
+  url: siteUrl,
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "BOB", availability: "https://schema.org/InStock" },
+  creator: { "@type": "Organization", name: "Ribentek", url: "https://ribentek.com" },
+  keywords: "SICOES, licitaciones Bolivia, contrataciones estatales, sicoes.gob.bo, licitaciones públicas Bolivia",
+  inLanguage: "es-BO",
+  availableLanguage: "Spanish",
+  areaServed: { "@type": "Country", name: "Bolivia" },
+  featureList: [
+    "Escaneo diario del portal SICOES",
+    "Análisis con Inteligencia Artificial Claude",
+    "Alertas por email a las 9am hora Bolivia",
+    "Score de relevancia por empresa",
+    "Filtros por rubro y palabras clave",
+  ],
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es">
       <head>
-        {jsonLd.map((schema, i) => (
-          <script
-            key={i}
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-          />
-        ))}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body className={ibmPlexMono.variable}>{children}</body>
     </html>

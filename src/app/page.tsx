@@ -50,14 +50,6 @@ const faqJsonLd = {
         text: "Sí, SICOES Monitor es completamente gratuito. Solo necesitás un email para registrarte, configurar tu perfil y empezar a recibir alertas diarias de licitaciones.",
       },
     },
-    {
-      "@type": "Question",
-      name: "¿Quién desarrolló SICOES Monitor?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "SICOES Monitor fue desarrollado por Ribentek, empresa tecnológica con más de 25 proyectos implementados en 5 países y 6 industrias. Ribentek se especializa en automatización e inteligencia artificial aplicada a procesos de negocio.",
-      },
-    },
   ],
 };
 
