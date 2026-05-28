@@ -23,31 +23,39 @@ const faqJsonLd = {
       name: "¿Qué es SICOES Monitor?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "SICOES Monitor es una plataforma que monitorea automáticamente el portal SICOES (sicoes.gob.bo) del Estado Plurinacional de Bolivia. Cada mañana escanea todas las licitaciones vigentes y utiliza Inteligencia Artificial para enviar por email solo las oportunidades relevantes para tu empresa según tu rubro y palabras clave.",
+        text: "SICOES Monitor es una plataforma gratuita que monitorea automáticamente el portal SICOES (sicoes.gob.bo) del Estado Plurinacional de Bolivia. Cada mañana escanea todas las licitaciones y convocatorias vigentes y usa Inteligencia Artificial para enviarte por email solo las oportunidades relevantes para tu empresa según tu rubro.",
       },
     },
     {
       "@type": "Question",
-      name: "¿Cómo funciona el monitoreo de licitaciones en SICOES?",
+      name: "¿Cómo ver las licitaciones y convocatorias de SICOES automáticamente?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "SICOES Monitor escanea el portal sicoes.gob.bo cada día a las 6am hora Bolivia. Luego Claude IA analiza cada licitación y le asigna un score de relevancia para tu perfil de empresa. A las 9am recibís un email personalizado con las mejores oportunidades del día, ordenadas por relevancia, con link directo a cada licitación.",
+        text: "Con SICOES Monitor podés recibir las licitaciones y convocatorias de sicoes.gob.bo automáticamente por email cada mañana a las 9am hora Bolivia. El sistema escanea el portal oficial, analiza la relevancia con IA y te envía solo las contrataciones que coinciden con tu rubro y palabras clave.",
       },
     },
     {
       "@type": "Question",
-      name: "¿Qué empresas bolivianas pueden usar SICOES Monitor?",
+      name: "¿Qué tipos de empresas bolivianas pueden usar SICOES Monitor?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Cualquier empresa que participe o quiera participar en contrataciones con el Estado boliviano. La plataforma tiene perfiles predefinidos para construcción, tecnología, salud, educación, energía, logística, consultoría, servicios generales y mantenimiento.",
+        text: "Cualquier empresa que quiera participar en contrataciones y licitaciones del Estado boliviano. La plataforma tiene perfiles para construcción, tecnología, salud, educación, energía, logística, consultoría, servicios generales y mantenimiento.",
       },
     },
     {
       "@type": "Question",
-      name: "¿Es gratuito SICOES Monitor?",
+      name: "¿Es gratuito monitorear SICOES?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Sí, SICOES Monitor es completamente gratuito. Solo necesitás un email para registrarte, configurar tu perfil y empezar a recibir alertas diarias de licitaciones.",
+        text: "Sí, SICOES Monitor es completamente gratuito. Solo necesitás un email para registrarte, elegir tu rubro y empezar a recibir alertas diarias de licitaciones y convocatorias de SICOES.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "¿Los datos de licitaciones son oficiales del portal SICOES?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Sí. Todos los datos provienen directamente del portal oficial sicoes.gob.bo del Estado Plurinacional de Bolivia. SICOES Monitor nunca inventa ni modifica información — solo organiza y prioriza las licitaciones vigentes para tu empresa.",
       },
     },
   ],
@@ -113,18 +121,24 @@ export default function LandingPage() {
             fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 700,
             lineHeight: "1.15", marginBottom: "24px", letterSpacing: "-0.02em",
           }}>
-            Licitaciones de{" "}
             <span style={{ color: "var(--accent)" }}>SICOES</span>
-            {" "}analizadas<br />con Inteligencia Artificial
+            {" "}Monitor — Licitaciones<br />y Convocatorias con IA
           </h1>
 
           <p style={{
             fontSize: "clamp(1rem, 2vw, 1.175rem)", color: "var(--muted)",
-            maxWidth: "620px", margin: "0 auto 40px", lineHeight: "1.7",
+            maxWidth: "640px", margin: "0 auto 16px", lineHeight: "1.7",
           }}>
-            Monitoreá automáticamente el portal sicoes.gob.bo y recibí cada mañana
-            a las 9am las licitaciones más relevantes para tu empresa, ya analizadas y
-            puntuadas por IA según tu rubro.
+            Monitoreá automáticamente las licitaciones y convocatorias del portal{" "}
+            <strong style={{ color: "var(--text)" }}>sicoes.gob.bo</strong>.
+            Cada mañana a las 9am recibís por email las contrataciones estatales
+            más relevantes para tu empresa en Bolivia, ya analizadas por IA.
+          </p>
+          <p style={{
+            fontSize: "0.9rem", color: "var(--muted)", opacity: 0.7,
+            margin: "0 auto 40px", maxWidth: "480px",
+          }}>
+            Sistema de Contrataciones del Estado Plurinacional de Bolivia · Gratis
           </p>
 
           <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
@@ -180,6 +194,27 @@ export default function LandingPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* ── What is SICOES ───────────────────────────────────────────── */}
+        <section aria-labelledby="sicoes-heading" style={{ marginBottom: "80px" }}>
+          <div className="card" style={{ padding: "36px 40px", borderLeft: "3px solid var(--accent)" }}>
+            <h2 id="sicoes-heading" style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "14px" }}>
+              ¿Qué es SICOES y por qué monitorearlo?
+            </h2>
+            <p style={{ color: "var(--muted)", fontSize: "0.9375rem", lineHeight: "1.8", marginBottom: "16px" }}>
+              <strong style={{ color: "var(--text)" }}>SICOES</strong> (Sistema de Contrataciones del Estado)
+              es el portal oficial del Estado Plurinacional de Bolivia donde se publican todas las{" "}
+              <strong style={{ color: "var(--text)" }}>licitaciones, convocatorias y contrataciones públicas</strong> del país.
+              Todos los días se publican nuevas oportunidades en rubros como construcción, tecnología, salud,
+              servicios y más — pero revisarlo manualmente es imposible.
+            </p>
+            <p style={{ color: "var(--muted)", fontSize: "0.9375rem", lineHeight: "1.8", margin: 0 }}>
+              <strong style={{ color: "var(--accent)" }}>SICOES Monitor</strong> escanea el portal sicoes.gob.bo
+              automáticamente cada día y usa Inteligencia Artificial para identificar las convocatorias
+              relevantes para tu empresa, ahorrándote horas de búsqueda manual.
+            </p>
           </div>
         </section>
 
@@ -423,23 +458,23 @@ export default function LandingPage() {
             {[
               {
                 q: "¿Qué es SICOES Monitor?",
-                a: "SICOES Monitor es una plataforma que monitorea automáticamente el portal SICOES (sicoes.gob.bo) del Estado Plurinacional de Bolivia. Cada mañana escanea todas las licitaciones vigentes y usa IA para enviarte solo las oportunidades relevantes para tu empresa según tu rubro y palabras clave.",
+                a: "SICOES Monitor es una plataforma gratuita que monitorea el portal SICOES (sicoes.gob.bo) automáticamente. Cada mañana escanea todas las licitaciones y convocatorias vigentes y usa IA para enviarte por email solo las oportunidades relevantes para tu empresa según tu rubro.",
               },
               {
-                q: "¿Cómo funciona el monitoreo de licitaciones?",
-                a: "El sistema escanea sicoes.gob.bo cada día a las 6am hora Bolivia. Claude IA analiza cada licitación y le asigna un score de relevancia para tu perfil. A las 9am recibís un email con las mejores oportunidades del día, ordenadas por relevancia, con link directo a cada licitación.",
+                q: "¿Cómo ver las convocatorias y licitaciones de SICOES automáticamente?",
+                a: "Registrate en sicoesmonitor.com, elegí tu rubro y activá las notificaciones. El sistema escanea sicoes.gob.bo cada día, analiza la relevancia con IA y te envía solo las contrataciones que coinciden con tu perfil a las 9am hora Bolivia.",
               },
               {
-                q: "¿Qué empresas pueden usar SICOES Monitor?",
-                a: "Cualquier empresa que participe o quiera participar en contrataciones con el Estado boliviano: construcción, tecnología, salud, educación, energía, logística, consultoría, servicios generales y mantenimiento.",
+                q: "¿Qué empresas bolivianas pueden usarlo?",
+                a: "Cualquier empresa que quiera participar en contrataciones del Estado boliviano: construcción, tecnología, salud, educación, energía, logística, consultoría, servicios generales y mantenimiento.",
               },
               {
-                q: "¿Es gratuito?",
-                a: "Sí, SICOES Monitor es completamente gratuito. Solo necesitás un email para registrarte, configurar tu perfil y empezar a recibir alertas diarias de licitaciones desde SICOES.",
+                q: "¿Es gratuito monitorear SICOES?",
+                a: "Sí, completamente gratuito. Solo necesitás un email para registrarte y empezar a recibir alertas diarias de licitaciones y convocatorias de SICOES.",
               },
               {
                 q: "¿Los datos son oficiales del portal SICOES?",
-                a: "Sí. Los datos provienen directamente del portal oficial sicoes.gob.bo del Estado Plurinacional de Bolivia. SICOES Monitor nunca inventa ni modifica la información de las licitaciones.",
+                a: "Sí. Todos los datos provienen directamente de sicoes.gob.bo del Estado Plurinacional de Bolivia. SICOES Monitor no inventa información — organiza y prioriza las licitaciones vigentes para tu empresa.",
               },
             ].map((item) => (
               <div key={item.q} className="card" style={{ padding: "24px 28px" }}>
