@@ -1,11 +1,12 @@
 import { ImageResponse } from "next/og";
+import { NextRequest } from "next/server";
 
 export const runtime = "edge";
-export const size = { width: 1200, height: 630 };
-export const contentType = "image/png";
 
-export default function OGImage() {
-  return new ImageResponse(
+const size = { width: 1200, height: 630 };
+
+export async function GET(_req: NextRequest) {
+  const img = new ImageResponse(
     (
       <div
         style={{
@@ -16,33 +17,33 @@ export default function OGImage() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          fontFamily: "'Courier New', monospace",
+          fontFamily: "monospace",
           position: "relative",
           overflow: "hidden",
         }}
       >
-        {/* Subtle grid pattern */}
+        {/* Grid pattern */}
         <div
           style={{
             position: "absolute",
             inset: 0,
             backgroundImage:
-              "linear-gradient(rgba(0,229,195,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,195,0.04) 1px, transparent 1px)",
+              "linear-gradient(rgba(0,229,195,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,195,0.05) 1px, transparent 1px)",
             backgroundSize: "48px 48px",
             display: "flex",
           }}
         />
 
-        {/* Glow top-center */}
+        {/* Glow */}
         <div
           style={{
             position: "absolute",
-            top: "-120px",
+            top: "-100px",
             left: "50%",
             transform: "translateX(-50%)",
-            width: "600px",
-            height: "400px",
-            background: "radial-gradient(ellipse, rgba(0,229,195,0.12) 0%, transparent 70%)",
+            width: "700px",
+            height: "450px",
+            background: "radial-gradient(ellipse, rgba(0,229,195,0.15) 0%, transparent 65%)",
             display: "flex",
           }}
         />
@@ -53,7 +54,6 @@ export default function OGImage() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: 0,
             position: "relative",
             padding: "0 80px",
             textAlign: "center",
@@ -65,11 +65,11 @@ export default function OGImage() {
               display: "flex",
               alignItems: "center",
               gap: "10px",
-              padding: "8px 20px",
+              padding: "8px 22px",
               borderRadius: "100px",
               background: "rgba(0,229,195,0.08)",
-              border: "1px solid rgba(0,229,195,0.3)",
-              marginBottom: "32px",
+              border: "1px solid rgba(0,229,195,0.35)",
+              marginBottom: "36px",
             }}
           >
             <div
@@ -81,52 +81,31 @@ export default function OGImage() {
                 display: "flex",
               }}
             />
-            <span
-              style={{
-                color: "#00E5C3",
-                fontSize: "18px",
-                letterSpacing: "0.08em",
-                fontWeight: 600,
-              }}
-            >
+            <span style={{ color: "#00E5C3", fontSize: "18px", letterSpacing: "0.08em", fontWeight: 600 }}>
               Sistema activo · Bolivia
             </span>
           </div>
 
           {/* Logo row */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-              marginBottom: "28px",
-            }}
-          >
+          <div style={{ display: "flex", alignItems: "center", gap: "18px", marginBottom: "32px" }}>
             <div
               style={{
-                width: "56px",
-                height: "56px",
+                width: "60px",
+                height: "60px",
                 borderRadius: "14px",
                 background: "rgba(0,229,195,0.1)",
-                border: "1.5px solid #00E5C3",
+                border: "2px solid #00E5C3",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "28px",
+                fontSize: "30px",
                 fontWeight: 700,
                 color: "#00E5C3",
               }}
             >
               R
             </div>
-            <span
-              style={{
-                color: "#00E5C3",
-                fontSize: "32px",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-              }}
-            >
+            <span style={{ color: "#00E5C3", fontSize: "34px", fontWeight: 700, letterSpacing: "0.12em" }}>
               SICOES MONITOR
             </span>
           </div>
@@ -135,16 +114,21 @@ export default function OGImage() {
           <div
             style={{
               color: "#E0EAF4",
-              fontSize: "58px",
+              fontSize: "60px",
               fontWeight: 700,
               lineHeight: 1.15,
               marginBottom: "24px",
-              maxWidth: "900px",
+              maxWidth: "920px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
             }}
           >
-            Licitaciones de{" "}
-            <span style={{ color: "#00E5C3" }}>SICOES</span>
-            {" "}con<br />Inteligencia Artificial
+            <span>
+              Licitaciones de{" "}
+              <span style={{ color: "#00E5C3" }}>SICOES</span>
+            </span>
+            <span>con Inteligencia Artificial</span>
           </div>
 
           {/* Subtitle */}
@@ -154,26 +138,22 @@ export default function OGImage() {
               fontSize: "24px",
               lineHeight: 1.5,
               maxWidth: "700px",
-              marginBottom: "48px",
+              marginBottom: "44px",
             }}
           >
             Alertas diarias personalizadas para empresas bolivianas
           </div>
 
           {/* Feature chips */}
-          <div style={{ display: "flex", gap: "12px" }}>
-            {[
-              "📡  Escaneo diario SICOES",
-              "🤖  Análisis con IA",
-              "📧  Email 9am Bolivia",
-            ].map((label) => (
+          <div style={{ display: "flex", gap: "14px" }}>
+            {["Escaneo diario SICOES", "Analisis con IA", "Email 9am Bolivia"].map((label) => (
               <div
                 key={label}
                 style={{
-                  padding: "10px 20px",
+                  padding: "10px 22px",
                   borderRadius: "100px",
                   background: "rgba(0,229,195,0.08)",
-                  border: "1px solid rgba(0,229,195,0.2)",
+                  border: "1px solid rgba(0,229,195,0.25)",
                   color: "#00E5C3",
                   fontSize: "18px",
                   display: "flex",
@@ -185,25 +165,23 @@ export default function OGImage() {
           </div>
         </div>
 
-        {/* Footer bar */}
+        {/* Footer */}
         <div
           style={{
             position: "absolute",
             bottom: 0,
             left: 0,
             right: 0,
-            height: "60px",
+            height: "62px",
             borderTop: "1px solid #1A2E45",
-            background: "rgba(13,27,42,0.8)",
+            background: "rgba(13,27,42,0.9)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: "0 60px",
+            padding: "0 64px",
           }}
         >
-          <span style={{ color: "#4A6075", fontSize: "16px" }}>
-            www.sicoesmonitor.com
-          </span>
+          <span style={{ color: "#4A6075", fontSize: "16px" }}>www.sicoesmonitor.com</span>
           <span style={{ color: "#4A6075", fontSize: "16px" }}>
             Powered by{" "}
             <span style={{ color: "#00E5C3", fontWeight: 600 }}>Ribentek</span>
@@ -211,6 +189,14 @@ export default function OGImage() {
         </div>
       </div>
     ),
-    { ...size }
+    {
+      ...size,
+      headers: {
+        "Content-Type": "image/png",
+        "Cache-Control": "public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800",
+      },
+    }
   );
+
+  return img;
 }

@@ -209,7 +209,7 @@ function buildEmailHtml(
     <div style="text-align:center;color:#4A6075;font-size:11px;line-height:1.6;">
       <p style="margin:0 0 4px 0;">SICOES Monitor · Bolivia</p>
       <p style="margin:0 0 4px 0;">Enviado automáticamente todos los días a las 9:00 AM hora Bolivia</p>
-      <p style="margin:0;">Editá tus palabras clave o pausá las notificaciones desde <a href="https://rfp-ai.vercel.app/dashboard" style="color:#00E5C3;text-decoration:none;">tu dashboard</a></p>
+      <p style="margin:0;">Editá tus palabras clave o pausá las notificaciones desde <a href="https://www.sicoesmonitor.com/dashboard" style="color:#00E5C3;text-decoration:none;">tu dashboard</a></p>
     </div>
   </div>
 </body>
@@ -226,7 +226,7 @@ function buildEmptyEmailHtml(email: string, companyType: string, totalCached: nu
       <p style="font-size:16px;margin:0 0 16px 0;">Hola ${email},</p>
       <p style="margin:0 0 16px 0;">Hoy no encontramos licitaciones VIGENTES en SICOES que coincidan con tus palabras clave para <strong style="color:#00E5C3;">${companyType}</strong>.</p>
       <p style="color:#4A6075;font-size:13px;margin:0 0 16px 0;">El portal SICOES tiene ${totalCached} licitaciones vigentes en total hoy, pero ninguna matchea tus filtros.</p>
-      <p style="margin:0;"><a href="https://rfp-ai.vercel.app/dashboard" style="color:#00E5C3;">Ajustá tus palabras clave</a> para recibir más oportunidades.</p>
+      <p style="margin:0;"><a href="https://www.sicoesmonitor.com/dashboard" style="color:#00E5C3;">Ajustá tus palabras clave</a> para recibir más oportunidades.</p>
     </div>
   </div>
 </body></html>`;

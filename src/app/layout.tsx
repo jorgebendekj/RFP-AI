@@ -8,29 +8,42 @@ const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-mono",
 });
 
-const siteUrl = "https://www.ribentek.site";
+const siteUrl = "https://www.sicoesmonitor.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "SICOES Monitor · Licitaciones Bolivia con IA",
+    default: "SICOES Monitor — Alertas de Licitaciones Bolivia con IA",
     template: "%s · SICOES Monitor",
   },
   description:
-    "Monitoreá automáticamente las licitaciones del portal SICOES (sicoes.gob.bo) con Inteligencia Artificial. Recibí cada mañana las oportunidades más relevantes para tu empresa en Bolivia.",
+    "Monitoreá las licitaciones de SICOES (sicoes.gob.bo) con Inteligencia Artificial. Recibí cada mañana a las 9am un resumen personalizado de las convocatorias vigentes en Bolivia según tu rubro. Gratis.",
   keywords: [
     "SICOES",
-    "licitaciones Bolivia",
-    "contrataciones estatales Bolivia",
-    "sicoes.gob.bo",
-    "licitaciones públicas Bolivia",
-    "sistema de contrataciones estado Bolivia",
+    "SICOES Bolivia",
+    "SICOES licitaciones",
     "SICOES monitor",
-    "licitaciones IA Bolivia",
-    "contrataciones gobierno Bolivia",
-    "licitaciones empresas Bolivia",
+    "SICOES convocatorias",
     "SICOES alertas",
-    "licitaciones automáticas Bolivia",
+    "sicoes.gob.bo",
+    "licitaciones Bolivia",
+    "licitaciones públicas Bolivia",
+    "contrataciones estatales Bolivia",
+    "contrataciones públicas Bolivia",
+    "sistema de contrataciones Bolivia",
+    "convocatorias Bolivia 2025",
+    "convocatorias Bolivia 2026",
+    "licitaciones IA Bolivia",
+    "alertas licitaciones SICOES",
+    "monitor SICOES Bolivia",
+    "licitaciones construcción Bolivia",
+    "licitaciones tecnología Bolivia",
+    "licitaciones servicios Bolivia",
+    "licitaciones mantenimiento Bolivia",
+    "licitaciones salud Bolivia",
+    "licitaciones consultoría Bolivia",
+    "portal licitaciones Bolivia",
+    "buscar licitaciones Bolivia",
   ],
   authors: [{ name: "Ribentek", url: "https://ribentek.com" }],
   creator: "Ribentek",
@@ -54,10 +67,11 @@ export const metadata: Metadata = {
       "Monitoreá automáticamente las licitaciones del portal SICOES con Inteligencia Artificial. Recibí cada mañana las oportunidades más relevantes para tu empresa en Bolivia.",
     images: [
       {
-        url: "/opengraph-image",
+        url: `${siteUrl}/og.png`,
         width: 1200,
         height: 630,
         alt: "SICOES Monitor — Licitaciones Bolivia con IA",
+        type: "image/png",
       },
     ],
   },
@@ -66,7 +80,7 @@ export const metadata: Metadata = {
     title: "SICOES Monitor · Licitaciones Bolivia con IA",
     description:
       "Monitoreá las licitaciones de SICOES automáticamente con IA. Alertas diarias para empresas bolivianas.",
-    images: ["/opengraph-image"],
+    images: [`${siteUrl}/og.png`],
   },
   icons: {
     icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
@@ -79,26 +93,45 @@ const jsonLd = {
   "@type": "SoftwareApplication",
   name: "SICOES Monitor",
   description:
-    "Sistema de monitoreo automático de licitaciones del portal SICOES (sicoes.gob.bo) con análisis de Inteligencia Artificial para empresas bolivianas.",
+    "Sistema de monitoreo automático de licitaciones del portal SICOES (sicoes.gob.bo) con análisis de Inteligencia Artificial para empresas bolivianas. Envía alertas diarias personalizadas por email a las 9am hora Bolivia.",
   url: siteUrl,
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
-  offers: { "@type": "Offer", price: "0", priceCurrency: "BOB" },
+  offers: { "@type": "Offer", price: "0", priceCurrency: "BOB", availability: "https://schema.org/InStock" },
   creator: { "@type": "Organization", name: "Ribentek", url: "https://ribentek.com" },
-  keywords: "SICOES, licitaciones Bolivia, contrataciones estatales, sicoes.gob.bo",
+  keywords: "SICOES, licitaciones Bolivia, contrataciones estatales, sicoes.gob.bo, licitaciones públicas Bolivia",
   inLanguage: "es-BO",
   availableLanguage: "Spanish",
   areaServed: { "@type": "Country", name: "Bolivia" },
+  featureList: [
+    "Escaneo diario del portal SICOES",
+    "Análisis con Inteligencia Artificial Claude",
+    "Alertas por email a las 9am hora Bolivia",
+    "Score de relevancia por empresa",
+    "Filtros por rubro y palabras clave",
+  ],
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "SICOES Monitor",
+  url: siteUrl,
+  description: "Monitor automático de licitaciones y convocatorias del portal SICOES Bolivia con Inteligencia Artificial.",
+  inLanguage: "es-BO",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: { "@type": "EntryPoint", urlTemplate: `${siteUrl}/licitaciones?q={search_term_string}` },
+    "query-input": "required name=search_term_string",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es">
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       </head>
       <body className={ibmPlexMono.variable}>{children}</body>
     </html>

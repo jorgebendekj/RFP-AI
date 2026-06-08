@@ -9,11 +9,65 @@ import {
   Mail,
   Zap,
   Shield,
+  Globe,
+  Layers,
+  Award,
 } from "lucide-react";
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "¿Qué es SICOES Monitor?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "SICOES Monitor es una plataforma gratuita que monitorea automáticamente el portal SICOES (sicoes.gob.bo) del Estado Plurinacional de Bolivia. Cada mañana escanea todas las licitaciones y convocatorias vigentes y usa Inteligencia Artificial para enviarte por email solo las oportunidades relevantes para tu empresa según tu rubro.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "¿Cómo ver las licitaciones y convocatorias de SICOES automáticamente?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Con SICOES Monitor podés recibir las licitaciones y convocatorias de sicoes.gob.bo automáticamente por email cada mañana a las 9am hora Bolivia. El sistema escanea el portal oficial, analiza la relevancia con IA y te envía solo las contrataciones que coinciden con tu rubro y palabras clave.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "¿Qué tipos de empresas bolivianas pueden usar SICOES Monitor?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Cualquier empresa que quiera participar en contrataciones y licitaciones del Estado boliviano. La plataforma tiene perfiles para construcción, tecnología, salud, educación, energía, logística, consultoría, servicios generales y mantenimiento.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "¿Es gratuito monitorear SICOES?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Sí, SICOES Monitor es completamente gratuito. Solo necesitás un email para registrarte, elegir tu rubro y empezar a recibir alertas diarias de licitaciones y convocatorias de SICOES.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "¿Los datos de licitaciones son oficiales del portal SICOES?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Sí. Todos los datos provienen directamente del portal oficial sicoes.gob.bo del Estado Plurinacional de Bolivia. SICOES Monitor nunca inventa ni modifica información — solo organiza y prioriza las licitaciones vigentes para tu empresa.",
+      },
+    },
+  ],
+};
 
 export default function LandingPage() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
 
       {/* ── Nav ──────────────────────────────────────────────────────── */}
       <nav style={{
@@ -36,15 +90,22 @@ export default function LandingPage() {
             SICOES MONITOR
           </span>
         </div>
-        <Link href="/login" style={{
-          display: "flex", alignItems: "center", gap: "6px",
-          padding: "8px 18px", background: "rgba(0,229,195,0.1)",
-          border: "1px solid var(--accent)", borderRadius: "6px",
-          color: "var(--accent)", textDecoration: "none",
-          fontSize: "0.875rem", fontWeight: 600,
-        }}>
-          Iniciar sesión <ArrowRight size={14} />
-        </Link>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <Link href="/licitaciones" style={{
+            color: "var(--muted)", textDecoration: "none", fontSize: "0.875rem",
+          }}>
+            Licitaciones
+          </Link>
+          <Link href="/login" style={{
+            display: "flex", alignItems: "center", gap: "6px",
+            padding: "8px 18px", background: "rgba(0,229,195,0.1)",
+            border: "1px solid var(--accent)", borderRadius: "6px",
+            color: "var(--accent)", textDecoration: "none",
+            fontSize: "0.875rem", fontWeight: 600,
+          }}>
+            Iniciar sesión <ArrowRight size={14} />
+          </Link>
+        </div>
       </nav>
 
       <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 24px" }}>
@@ -67,17 +128,24 @@ export default function LandingPage() {
             fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 700,
             lineHeight: "1.15", marginBottom: "24px", letterSpacing: "-0.02em",
           }}>
-            Licitaciones de{" "}
             <span style={{ color: "var(--accent)" }}>SICOES</span>
-            {" "}analizadas<br />con Inteligencia Artificial
+            {" "}Monitor — Licitaciones<br />y Convocatorias con IA
           </h1>
 
           <p style={{
             fontSize: "clamp(1rem, 2vw, 1.175rem)", color: "var(--muted)",
-            maxWidth: "600px", margin: "0 auto 40px", lineHeight: "1.7",
+            maxWidth: "640px", margin: "0 auto 16px", lineHeight: "1.7",
           }}>
-            Monitoreá automáticamente el Sistema de Contrataciones del Estado Plurinacional de Bolivia.
-            Recibí cada mañana las licitaciones más relevantes para tu empresa, ya analizadas por IA.
+            Monitoreá automáticamente las licitaciones y convocatorias del portal{" "}
+            <strong style={{ color: "var(--text)" }}>sicoes.gob.bo</strong>.
+            Cada mañana a las 9am recibís por email las contrataciones estatales
+            más relevantes para tu empresa en Bolivia, ya analizadas por IA.
+          </p>
+          <p style={{
+            fontSize: "0.9rem", color: "var(--muted)", opacity: 0.7,
+            margin: "0 auto 40px", maxWidth: "480px",
+          }}>
+            Sistema de Contrataciones del Estado Plurinacional de Bolivia · Gratis
           </p>
 
           <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
@@ -101,7 +169,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── Terminal preview ─────────────────────────────────────────── */}
-        <section style={{ marginBottom: "96px" }}>
+        <section aria-label="Ejemplo de escaneo SICOES" style={{ marginBottom: "96px" }}>
           <div style={{
             background: "#030810", border: "1px solid var(--border)",
             borderRadius: "12px", overflow: "hidden",
@@ -119,14 +187,14 @@ export default function LandingPage() {
             </div>
             <div style={{ padding: "20px 24px", fontSize: "0.8125rem", lineHeight: "1.8" }}>
               {[
-                { t: "accent", txt: "$ sicoes-monitor --scan --profile=construccion" },
-                { t: "muted", txt: "[09:00:01] Iniciando escaneo de SICOES..." },
-                { t: "muted", txt: "[09:00:02] Leyendo caché de licitaciones vigentes..." },
+                { t: "accent",  txt: "$ sicoes-monitor --scan --profile=construccion" },
+                { t: "muted",   txt: "[09:00:01] Iniciando escaneo de SICOES (sicoes.gob.bo)..." },
+                { t: "muted",   txt: "[09:00:02] Leyendo caché de licitaciones vigentes..." },
                 { t: "success", txt: "[09:00:03] ✓ 144 licitaciones encontradas en SICOES" },
-                { t: "muted", txt: "[09:00:04] Analizando relevancia con Claude IA..." },
+                { t: "muted",   txt: "[09:00:04] Analizando relevancia con Claude IA..." },
                 { t: "success", txt: "[09:00:09] ✓ 15 licitaciones relevantes para tu perfil" },
-                { t: "success", txt: "[09:00:10] ✓ Email enviado → jbendek@ribentek.com" },
-                { t: "accent", txt: "▋" },
+                { t: "success", txt: "[09:00:10] ✓ Email enviado → empresa@bolivia.com" },
+                { t: "accent",  txt: "▋" },
               ].map((l, i) => (
                 <div key={i} style={{ color: l.t === "accent" ? "var(--accent)" : l.t === "success" ? "var(--success)" : "var(--muted)" }}>
                   {l.txt}
@@ -136,14 +204,35 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ── What is SICOES ───────────────────────────────────────────── */}
+        <section aria-labelledby="sicoes-heading" style={{ marginBottom: "80px" }}>
+          <div className="card" style={{ padding: "36px 40px", borderLeft: "3px solid var(--accent)" }}>
+            <h2 id="sicoes-heading" style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "14px" }}>
+              ¿Qué es SICOES y por qué monitorearlo?
+            </h2>
+            <p style={{ color: "var(--muted)", fontSize: "0.9375rem", lineHeight: "1.8", marginBottom: "16px" }}>
+              <strong style={{ color: "var(--text)" }}>SICOES</strong> (Sistema de Contrataciones del Estado)
+              es el portal oficial del Estado Plurinacional de Bolivia donde se publican todas las{" "}
+              <strong style={{ color: "var(--text)" }}>licitaciones, convocatorias y contrataciones públicas</strong> del país.
+              Todos los días se publican nuevas oportunidades en rubros como construcción, tecnología, salud,
+              servicios y más — pero revisarlo manualmente es imposible.
+            </p>
+            <p style={{ color: "var(--muted)", fontSize: "0.9375rem", lineHeight: "1.8", margin: 0 }}>
+              <strong style={{ color: "var(--accent)" }}>SICOES Monitor</strong> escanea el portal sicoes.gob.bo
+              automáticamente cada día y usa Inteligencia Artificial para identificar las convocatorias
+              relevantes para tu empresa, ahorrándote horas de búsqueda manual.
+            </p>
+          </div>
+        </section>
+
         {/* ── Features ─────────────────────────────────────────────────── */}
-        <section style={{ marginBottom: "96px" }}>
+        <section aria-labelledby="features-heading" style={{ marginBottom: "96px" }}>
           <div style={{ textAlign: "center", marginBottom: "48px" }}>
-            <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", fontWeight: 700, marginBottom: "12px" }}>
-              Todo lo que necesitás para ganar licitaciones
+            <h2 id="features-heading" style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", fontWeight: 700, marginBottom: "12px" }}>
+              Todo lo que necesitás para ganar licitaciones en Bolivia
             </h2>
             <p style={{ color: "var(--muted)", fontSize: "1rem" }}>
-              Diseñado para empresas bolivianas que participan en contrataciones del Estado
+              Diseñado para empresas bolivianas que participan en contrataciones con el Estado
             </p>
           </div>
 
@@ -152,17 +241,17 @@ export default function LandingPage() {
               {
                 icon: <Search size={22} color="var(--accent)" />,
                 title: "Escaneo diario de SICOES",
-                desc: "Monitoreamos el portal sicoes.gob.bo automáticamente cada mañana y procesamos todas las licitaciones vigentes.",
+                desc: "Monitoreamos el portal sicoes.gob.bo automáticamente cada mañana y procesamos todas las licitaciones vigentes en Bolivia.",
               },
               {
                 icon: <Brain size={22} color="var(--accent)" />,
                 title: "Análisis con IA",
-                desc: "Claude analiza cada licitación y le asigna un score de relevancia para tu empresa y rubro específico.",
+                desc: "Claude IA analiza cada licitación y le asigna un score de relevancia del 0 al 100 para tu empresa y rubro específico.",
               },
               {
                 icon: <Bell size={22} color="var(--accent)" />,
                 title: "Alertas por email a las 9am",
-                desc: "Recibís un resumen personalizado cada mañana con las mejores oportunidades del día, sin tener que entrar al portal.",
+                desc: "Recibís un resumen personalizado cada mañana con las mejores oportunidades del día, sin tener que entrar al portal SICOES.",
               },
               {
                 icon: <Zap size={22} color="var(--accent)" />,
@@ -170,7 +259,7 @@ export default function LandingPage() {
                 desc: "Elegís tu rubro y palabras clave. El sistema filtra y prioriza automáticamente las licitaciones que te interesan.",
               },
             ].map((f) => (
-              <div key={f.title} className="card" style={{ padding: "28px 24px" }}>
+              <article key={f.title} className="card" style={{ padding: "28px 24px" }}>
                 <div style={{
                   width: "44px", height: "44px", borderRadius: "10px",
                   background: "rgba(0,229,195,0.08)", border: "1px solid rgba(0,229,195,0.2)",
@@ -180,16 +269,16 @@ export default function LandingPage() {
                 </div>
                 <h3 style={{ fontSize: "1rem", fontWeight: 600, marginBottom: "10px" }}>{f.title}</h3>
                 <p style={{ color: "var(--muted)", fontSize: "0.875rem", lineHeight: "1.65" }}>{f.desc}</p>
-              </div>
+              </article>
             ))}
           </div>
         </section>
 
         {/* ── How it works ─────────────────────────────────────────────── */}
-        <section id="como-funciona" style={{ marginBottom: "96px" }}>
+        <section id="como-funciona" aria-labelledby="how-heading" style={{ marginBottom: "96px" }}>
           <div style={{ textAlign: "center", marginBottom: "48px" }}>
-            <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", fontWeight: 700, marginBottom: "12px" }}>
-              ¿Cómo funciona?
+            <h2 id="how-heading" style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", fontWeight: 700, marginBottom: "12px" }}>
+              ¿Cómo funciona SICOES Monitor?
             </h2>
             <p style={{ color: "var(--muted)", fontSize: "1rem" }}>Tres pasos, completamente automático</p>
           </div>
@@ -199,19 +288,19 @@ export default function LandingPage() {
               {
                 step: "01",
                 title: "Creá tu cuenta",
-                desc: "Ingresá tu email, elegís tu rubro (construcción, tecnología, salud, etc.) y configurás tus palabras clave en menos de 2 minutos.",
+                desc: "Ingresá tu email, elegís tu rubro (construcción, tecnología, servicios, etc.) y configurás tus palabras clave en menos de 2 minutos.",
                 icon: <Mail size={20} color="var(--accent)" />,
               },
               {
                 step: "02",
                 title: "Activá las notificaciones",
-                desc: "Con un clic activás el resumen diario. Inmediatamente te enviamos un email de prueba con las licitaciones de hoy.",
+                desc: "Con un clic activás el resumen diario. Inmediatamente te enviamos un email de prueba con las licitaciones vigentes de hoy en SICOES.",
                 icon: <Bell size={20} color="var(--accent)" />,
               },
               {
                 step: "03",
                 title: "Recibí oportunidades cada mañana",
-                desc: "A las 9am hora Bolivia recibís tu resumen diario con análisis de IA, score de relevancia y link directo a cada licitación.",
+                desc: "A las 9am hora Bolivia recibís tu resumen diario con análisis de IA, score de relevancia y link directo a cada licitación en sicoes.gob.bo.",
                 icon: <CheckCircle size={20} color="var(--success)" />,
               },
             ].map((s) => (
@@ -232,7 +321,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── Social proof ─────────────────────────────────────────────── */}
-        <section style={{ marginBottom: "96px" }}>
+        <section aria-label="Estadísticas" style={{ marginBottom: "96px" }}>
           <div className="card" style={{
             padding: "40px 32px", textAlign: "center",
             background: "linear-gradient(135deg, rgba(0,229,195,0.05) 0%, rgba(0,119,255,0.05) 100%)",
@@ -241,14 +330,15 @@ export default function LandingPage() {
             <h2 style={{ fontSize: "clamp(1.25rem, 3vw, 2rem)", fontWeight: 700, marginBottom: "12px" }}>
               Diseñado para el mercado boliviano
             </h2>
-            <p style={{ color: "var(--muted)", fontSize: "0.9375rem", maxWidth: "560px", margin: "0 auto 32px", lineHeight: "1.7" }}>
+            <p style={{ color: "var(--muted)", fontSize: "0.9375rem", maxWidth: "580px", margin: "0 auto 32px", lineHeight: "1.7" }}>
               SICOES Monitor fue creado específicamente para empresas que participan en el
               Sistema de Contrataciones del Estado Plurinacional de Bolivia (sicoes.gob.bo).
+              Todos los datos provienen en tiempo real del portal oficial.
             </p>
             <div style={{ display: "flex", justifyContent: "center", gap: "40px", flexWrap: "wrap" }}>
               {[
                 { value: "144+", label: "Licitaciones monitoreadas diariamente" },
-                { value: "9am", label: "Resumen diario, hora Bolivia" },
+                { value: "9am",  label: "Resumen diario, hora Bolivia" },
                 { value: "100%", label: "Datos reales de SICOES" },
               ].map((s) => (
                 <div key={s.label} style={{ textAlign: "center" }}>
@@ -261,23 +351,147 @@ export default function LandingPage() {
         </section>
 
         {/* ── Types of companies ───────────────────────────────────────── */}
-        <section style={{ marginBottom: "96px" }}>
+        <section aria-labelledby="rubros-heading" style={{ marginBottom: "96px" }}>
           <div style={{ textAlign: "center", marginBottom: "40px" }}>
-            <h2 style={{ fontSize: "clamp(1.25rem, 2.5vw, 1.875rem)", fontWeight: 700, marginBottom: "10px" }}>
-              Para todo tipo de empresa
+            <h2 id="rubros-heading" style={{ fontSize: "clamp(1.25rem, 2.5vw, 1.875rem)", fontWeight: 700, marginBottom: "10px" }}>
+              Para todo tipo de empresa boliviana
             </h2>
             <p style={{ color: "var(--muted)", fontSize: "0.9375rem" }}>
-              Configurá tu perfil según tu rubro y solo recibís licitaciones relevantes
+              Configurá tu perfil según tu rubro y solo recibís licitaciones relevantes para vos
             </p>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", justifyContent: "center" }}>
             {[
               "Construcción", "Tecnología e IT", "Salud y Farmacia", "Consultoría",
-              "Alimentos y Servicios", "Transporte", "Educación", "Equipamiento",
+              "Servicios Generales", "Mantenimiento", "Transporte y Logística", "Educación",
             ].map((cat) => (
               <span key={cat} className="chip" style={{ fontSize: "0.875rem", padding: "8px 18px", cursor: "default" }}>
                 {cat}
               </span>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Ribentek credibility ─────────────────────────────────────── */}
+        <section aria-labelledby="ribentek-heading" style={{ marginBottom: "96px" }}>
+          <div className="card" style={{
+            padding: "48px 40px",
+            background: "linear-gradient(135deg, rgba(0,229,195,0.04) 0%, rgba(0,119,255,0.04) 100%)",
+            border: "1px solid rgba(0,229,195,0.15)",
+          }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "40px", alignItems: "center", flexWrap: "wrap" }}>
+              <div>
+                <div style={{
+                  display: "inline-flex", alignItems: "center", gap: "8px",
+                  padding: "4px 14px", borderRadius: "100px",
+                  background: "rgba(0,229,195,0.08)", border: "1px solid rgba(0,229,195,0.2)",
+                  marginBottom: "20px",
+                }}>
+                  <Award size={13} color="var(--accent)" />
+                  <span style={{ color: "var(--accent)", fontSize: "0.75rem", letterSpacing: "0.06em", fontWeight: 600 }}>
+                    DESARROLLADO POR RIBENTEK
+                  </span>
+                </div>
+                <h2 id="ribentek-heading" style={{ fontSize: "clamp(1.25rem, 2.5vw, 1.75rem)", fontWeight: 700, marginBottom: "14px" }}>
+                  Tecnología con experiencia real en Latinoamérica
+                </h2>
+                <p style={{ color: "var(--muted)", fontSize: "0.9375rem", lineHeight: "1.75", maxWidth: "560px", marginBottom: "28px" }}>
+                  SICOES Monitor es un producto de{" "}
+                  <a href="https://ribentek.com" target="_blank" rel="noopener noreferrer"
+                    style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>
+                    Ribentek
+                  </a>
+                  , empresa especializada en automatización e Inteligencia Artificial para procesos de negocio.
+                  Con proyectos en producción en Bolivia, Argentina, Chile, Perú y México, Ribentek aplica
+                  tecnología de vanguardia a problemas reales del mercado latinoamericano.
+                </p>
+                <div style={{ display: "flex", gap: "32px", flexWrap: "wrap" }}>
+                  {[
+                    { icon: <Layers size={16} color="var(--accent)" />, value: "25+", label: "proyectos implementados" },
+                    { icon: <Globe size={16} color="var(--accent)" />,  value: "5",   label: "países" },
+                    { icon: <Zap size={16} color="var(--accent)" />,    value: "6",   label: "industrias" },
+                  ].map((s) => (
+                    <div key={s.label} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{
+                        width: "36px", height: "36px", borderRadius: "8px",
+                        background: "rgba(0,229,195,0.08)", border: "1px solid rgba(0,229,195,0.2)",
+                        display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                      }}>
+                        {s.icon}
+                      </div>
+                      <div>
+                        <div style={{ fontSize: "1.375rem", fontWeight: 700, color: "var(--accent)", lineHeight: 1.1 }}>{s.value}</div>
+                        <div style={{ color: "var(--muted)", fontSize: "0.75rem", marginTop: "2px" }}>{s.label}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{
+                display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
+                padding: "24px 28px",
+                background: "rgba(0,229,195,0.06)", border: "1px solid rgba(0,229,195,0.2)",
+                borderRadius: "12px", textAlign: "center", minWidth: "160px",
+              }}>
+                <div style={{
+                  width: "52px", height: "52px", borderRadius: "12px",
+                  background: "rgba(0,229,195,0.1)", border: "1.5px solid var(--accent)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "26px", fontWeight: 700, color: "var(--accent)",
+                  marginBottom: "8px",
+                }}>
+                  R
+                </div>
+                <span style={{ color: "var(--accent)", fontWeight: 700, fontSize: "1rem", letterSpacing: "0.08em" }}>RIBENTEK</span>
+                <span style={{ color: "var(--muted)", fontSize: "0.75rem" }}>ribentek.com</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── FAQ ──────────────────────────────────────────────────────── */}
+        <section aria-labelledby="faq-heading" style={{ marginBottom: "96px" }}>
+          <div style={{ textAlign: "center", marginBottom: "48px" }}>
+            <h2 id="faq-heading" style={{ fontSize: "clamp(1.25rem, 2.5vw, 1.875rem)", fontWeight: 700, marginBottom: "10px" }}>
+              Preguntas frecuentes
+            </h2>
+            <p style={{ color: "var(--muted)", fontSize: "0.9375rem" }}>
+              Todo lo que necesitás saber sobre SICOES Monitor
+            </p>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px", maxWidth: "760px", margin: "0 auto" }}>
+            {[
+              {
+                q: "¿Qué es SICOES Monitor?",
+                a: "SICOES Monitor es una plataforma gratuita que monitorea el portal SICOES (sicoes.gob.bo) automáticamente. Cada mañana escanea todas las licitaciones y convocatorias vigentes y usa IA para enviarte por email solo las oportunidades relevantes para tu empresa según tu rubro.",
+              },
+              {
+                q: "¿Cómo ver las convocatorias y licitaciones de SICOES automáticamente?",
+                a: "Registrate en sicoesmonitor.com, elegí tu rubro y activá las notificaciones. El sistema escanea sicoes.gob.bo cada día, analiza la relevancia con IA y te envía solo las contrataciones que coinciden con tu perfil a las 9am hora Bolivia.",
+              },
+              {
+                q: "¿Qué empresas bolivianas pueden usarlo?",
+                a: "Cualquier empresa que quiera participar en contrataciones del Estado boliviano: construcción, tecnología, salud, educación, energía, logística, consultoría, servicios generales y mantenimiento.",
+              },
+              {
+                q: "¿Es gratuito monitorear SICOES?",
+                a: "Sí, completamente gratuito. Solo necesitás un email para registrarte y empezar a recibir alertas diarias de licitaciones y convocatorias de SICOES.",
+              },
+              {
+                q: "¿Los datos son oficiales del portal SICOES?",
+                a: "Sí. Todos los datos provienen directamente de sicoes.gob.bo del Estado Plurinacional de Bolivia. SICOES Monitor no inventa información — organiza y prioriza las licitaciones vigentes para tu empresa.",
+              },
+            ].map((item) => (
+              <div key={item.q} className="card" style={{ padding: "24px 28px" }}>
+                <h3 style={{ fontSize: "0.9375rem", fontWeight: 600, marginBottom: "10px", color: "var(--text)" }}>
+                  {item.q}
+                </h3>
+                <p style={{ color: "var(--muted)", fontSize: "0.875rem", lineHeight: "1.7", margin: 0 }}>
+                  {item.a}
+                </p>
+              </div>
             ))}
           </div>
         </section>
@@ -300,9 +514,9 @@ export default function LandingPage() {
             <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", fontWeight: 700, marginBottom: "16px" }}>
               Empezá a monitorear SICOES hoy
             </h2>
-            <p style={{ color: "var(--muted)", fontSize: "1rem", marginBottom: "32px", maxWidth: "480px", margin: "0 auto 32px", lineHeight: "1.7" }}>
+            <p style={{ color: "var(--muted)", fontSize: "1rem", maxWidth: "480px", margin: "0 auto 32px", lineHeight: "1.7" }}>
               Ingresá con tu email y configurá tu perfil en menos de 2 minutos.
-              El primer email con licitaciones llega hoy mismo.
+              El primer email con licitaciones de SICOES llega hoy mismo.
             </p>
             <Link href="/login" style={{
               display: "inline-flex", alignItems: "center", gap: "8px",
@@ -317,10 +531,7 @@ export default function LandingPage() {
       </div>
 
       {/* ── Footer ───────────────────────────────────────────────────────── */}
-      <footer style={{
-        borderTop: "1px solid var(--border)",
-        padding: "32px 24px",
-      }}>
+      <footer style={{ borderTop: "1px solid var(--border)", padding: "32px 24px" }}>
         <div style={{
           maxWidth: "1100px", margin: "0 auto",
           display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -329,7 +540,7 @@ export default function LandingPage() {
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <Radar size={16} color="var(--accent)" />
             <span style={{ color: "var(--muted)", fontSize: "0.8125rem" }}>
-              SICOES Monitor · licitaciones Bolivia
+              SICOES Monitor · licitaciones Bolivia · sicoesmonitor.com
             </span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
@@ -344,6 +555,7 @@ export default function LandingPage() {
               >
                 Ribentek
               </a>
+              {" "}· 25+ proyectos · 5 países · 6 industrias
             </span>
           </div>
         </div>
