@@ -90,15 +90,22 @@ export default function LandingPage() {
             SICOES MONITOR
           </span>
         </div>
-        <Link href="/login" style={{
-          display: "flex", alignItems: "center", gap: "6px",
-          padding: "8px 18px", background: "rgba(0,229,195,0.1)",
-          border: "1px solid var(--accent)", borderRadius: "6px",
-          color: "var(--accent)", textDecoration: "none",
-          fontSize: "0.875rem", fontWeight: 600,
-        }}>
-          Iniciar sesión <ArrowRight size={14} />
-        </Link>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <Link href="/licitaciones" style={{
+            color: "var(--muted)", textDecoration: "none", fontSize: "0.875rem",
+          }}>
+            Licitaciones
+          </Link>
+          <Link href="/login" style={{
+            display: "flex", alignItems: "center", gap: "6px",
+            padding: "8px 18px", background: "rgba(0,229,195,0.1)",
+            border: "1px solid var(--accent)", borderRadius: "6px",
+            color: "var(--accent)", textDecoration: "none",
+            fontSize: "0.875rem", fontWeight: 600,
+          }}>
+            Iniciar sesión <ArrowRight size={14} />
+          </Link>
+        </div>
       </nav>
 
       <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 24px" }}>
