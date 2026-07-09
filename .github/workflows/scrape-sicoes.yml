@@ -7,6 +7,10 @@ on:
     - cron: "0 10 * * *"
   workflow_dispatch:
 
+concurrency:
+  group: scrape-sicoes
+  cancel-in-progress: true
+
 jobs:
   scrape:
     name: Scrape and cache SICOES tenders
@@ -26,9 +30,25 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
-      - name: Install patchright Chromium (with system deps)
-        # patchright shares Playwright's browser binaries
+      - name: Get patchright version for cache key
+        id: patchright-ver
+        run: |
+          echo "ver=$(node -e "console.log(require('./node_modules/patchright/package.json').version)")" >> $GITHUB_OUTPUT
+
+      - name: Cache Chromium browser binary
+        id: chromium-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: chromium-${{ runner.os }}-patchright-${{ steps.patchright-ver.outputs.ver }}
+
+      - name: Install patchright Chromium with system deps (full install)
+        if: steps.chromium-cache.outputs.cache-hit != 'true'
         run: npx patchright install --with-deps chromium
+
+      - name: Install system deps only (browser already cached)
+        if: steps.chromium-cache.outputs.cache-hit == 'true'
+        run: npx patchright install-deps chromium
 
       - name: Run SICOES scraper
         env:
