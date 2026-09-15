@@ -198,6 +198,7 @@ export default function DashboardPage() {
       setResult(data);
     } catch (e: unknown) {
       addLog(`✗ Error: ${e instanceof Error ? e.message : "Error desconocido"}`);
+      addLog("  · ¿Persiste el problema? Escribí a jbendek@ribentek.com");
     } finally {
       setScanning(false);
     }

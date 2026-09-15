@@ -103,3 +103,7 @@ You'll see Chromium launch (headless) and scrape SICOES. Takes ~3–5 min locall
 - Anthropic API (relevance scoring): paid as-you-go, ~$0.001 per user scan with Haiku
 
 **Total operational cost: free for scraping, ~$0.03 per 30 user scans.**
+
+## Contact
+
+If the scraper is failing, the daily cache looks stale, or anything else about the SICOES monitor isn't working — email **jbendek@ribentek.com**.
