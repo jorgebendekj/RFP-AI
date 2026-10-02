@@ -19,6 +19,7 @@ export default function SiteFooter() {
             <Link href="/licitaciones" style={linkStyle}>Licitaciones</Link>
             <Link href="/blog" style={linkStyle}>Blog y guías</Link>
             <Link href="/blog/que-es-sicoes-bolivia" style={linkStyle}>¿Qué es SICOES?</Link>
+            <Link href="/blog/sicoes-requerimiento-de-personal-2026" style={linkStyle}>Requerimiento de personal</Link>
             <Link href="/blog/como-registrarse-en-el-rupe-bolivia" style={linkStyle}>RUPE</Link>
             <Link href="/login" style={linkStyle}>Crear cuenta</Link>
           </nav>

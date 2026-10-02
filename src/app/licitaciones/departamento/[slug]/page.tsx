@@ -22,11 +22,11 @@ export async function generateMetadata(
   const dept = DEPARTMENTS[slug];
   if (!dept) return {};
   return {
-    title: `Licitaciones SICOES en ${dept.name} — Convocatorias Vigentes 2026`,
-    description: `Listado actualizado de licitaciones y convocatorias vigentes del SICOES en ${dept.name}, Bolivia. Datos oficiales de sicoes.gob.bo actualizados cada día. Recibí alertas gratis por email.`,
+    title: `SICOES ${dept.name}: convocatorias vigentes 2026`,
+    description: `Convocatorias y licitaciones vigentes del SICOES en ${dept.name}, Bolivia. Datos de sicoes.gob.bo cada día. Alertas gratis.`,
     alternates: { canonical: `${siteUrl}/licitaciones/departamento/${slug}` },
     openGraph: {
-      title: `Licitaciones SICOES en ${dept.name} — Convocatorias Vigentes 2026`,
+      title: `SICOES ${dept.name}: convocatorias vigentes 2026`,
       description: `Licitaciones y convocatorias vigentes del portal SICOES en ${dept.name}, Bolivia. Datos oficiales actualizados diariamente.`,
       url: `${siteUrl}/licitaciones/departamento/${slug}`,
     },
@@ -263,6 +263,26 @@ export default async function DepartamentoPage(
       </div>
 
       {/* ── Footer ──────────────────────────────────────────────────────── */}
+      <section aria-labelledby="info-heading" style={{ maxWidth: "1100px", margin: "0 auto 56px", padding: "0 24px" }}>
+        <div className="card" style={{ padding: "28px 32px" }}>
+          <h2 id="info-heading" style={{ fontSize: "1.0625rem", fontWeight: 700, marginBottom: "12px" }}>
+            Cómo participar en las contrataciones públicas de {dept.name}
+          </h2>
+          <p style={{ color: "var(--muted)", fontSize: "0.875rem", lineHeight: 1.8, marginBottom: "12px" }}>
+            Los gobiernos municipales, gobernaciones, universidades y empresas estatales de {dept.name} publican sus
+            convocatorias en SICOES (sicoes.gob.bo). Para presentar una propuesta necesitas estar inscrito en el RUPE.
+            Revisa el documento base de contratación de cada proceso y respeta los plazos de presentación.
+          </p>
+          <p style={{ color: "var(--muted)", fontSize: "0.875rem", lineHeight: 1.8, margin: 0 }}>
+            Guías útiles:{" "}
+            <Link href="/blog/que-es-sicoes-bolivia" style={{ color: "var(--accent)" }}>qué es SICOES</Link>,{" "}
+            <Link href="/blog/como-registrarse-en-el-rupe-bolivia" style={{ color: "var(--accent)" }}>cómo registrarse en el RUPE</Link>,{" "}
+            <Link href="/blog/modalidades-de-contratacion-estatal-bolivia" style={{ color: "var(--accent)" }}>modalidades ANPE y Licitación Pública</Link> y{" "}
+            <Link href="/blog/sicoes-requerimiento-de-personal-2026" style={{ color: "var(--accent)" }}>requerimiento de personal</Link>.
+          </p>
+        </div>
+      </section>
+
       <SiteFooter />
     </div>
   );

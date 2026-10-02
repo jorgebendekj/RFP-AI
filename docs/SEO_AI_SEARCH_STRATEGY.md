@@ -53,3 +53,33 @@ Next (highest impact first):
 - Legal thresholds (Bs 20.000 / 50.000 / 200.000 / 1.000.000 / 70.000.000) come from public references found via web search of the Normas Básicas del SABS; they are labelled as "may change — verify". Have someone with procurement-law knowledge review before promoting.
 - Competitor notes are limited to what search snippets showed (sicoeshoy.bo was not reachable from the sandbox).
 - Publication dates are set to the day of this change.
+
+---
+
+# Update 2026-10-02 — Findable data (Bolivia, loc 2068 / es)
+
+Findable project: "Sicoes Monitor" (note: its default market is US/en — always pass `locationCode 2068, languageCode es`). Rank tracker (manual, 24 keywords, mobile) created; keywords saved with tag `bolivia-core`; competitors and context stored in the project.
+
+## Baseline
+- `sicoesmonitor.com`: ~1,047 organic visits/mo, 34 ranking keywords. Nearly all sit at **positions 13–25** (striking distance of page 1).
+- Top terms: `sicoes` 301k/mo (pos 23, KD 19), `sicoes bolivia` 12.1k (pos 15), `convocatoria(s) sicoes` 4.4k (pos 16), `sicoes cochabamba` 2.9k (pos 17), `sicoes la paz` 2.4k (pos 18), `sicoes santa cruz` 1.6k (pos 14), `sicoes sacaba` 1k, `sicoes requerimiento de personal 2026` 1k (pos 17).
+- `licitaciones bolivia` is only ~110/mo — **the audience searches "sicoes", not "licitaciones"**.
+
+## Key insights
+1. **Head-term intent is largely job seekers/consultants** ("requerimiento de personal", "empleos", "consultor individual") and people seeking the official portal. Our current scraper only covers `convNacional` tenders, so this demand is not yet served with live data.
+2. **SERPs are weak**: Facebook groups, YouTube, TikTok, Scribd and **infosiscon.com** (thousands of programmatic pages). Low KD (0–30) everywhere. AI Overviews appear on every query checked.
+3. **City/municipality long tail is cheap**: `sicoes sacaba/el alto/quillacollo/tiquipaya/vinto/viacha/sucre` all KD 0–10.
+
+## Implemented in this iteration
+- Titles/H-structure aligned to real queries: "SICOES {Departamento}: convocatorias vigentes 2026", home title "SICOES Bolivia: convocatorias y alertas diarias con IA".
+- New `/licitaciones/municipio/{slug}` pages (7) + sitemap + homepage links.
+- New guides: *SICOES requerimiento de personal 2026* and *sicoes.gob.bo: cómo ingresar y buscar convocatorias*; retitled the SICOES pillar guide for "sicoes bolivia".
+- Audit fixes (Findable crawl): titles/descriptions shortened, thin dept pages enriched with context + internal links, `/login` noindex with metadata.
+- Corrected a legal-threshold claim (national/international tender cap differs by source: Bs 40M vs 70M) — now flagged as "verify".
+
+## Next (ordered by expected impact)
+1. **Extend the scraper to "Requerimiento de Personal"** (`tipo=c`-style personnel listings) and publish live pages `/empleos-sicoes/{ciudad}` — targets the 300k+/mo head demand. Add a "personal" alert type to convert job seekers.
+2. **Per-tender detail pages** (`/licitaciones/{cuce}`) to compete with infosiscon's programmatic long tail.
+3. **Entity pages** (e.g. Gobierno Autónomo Municipal de X) — infosiscon ranks heavily on these.
+4. Re-run the rank tracker in ~2 weeks (`run_rank_tracker`) and compare to the baseline above; check Search Console for CTR on pos 13–20 terms.
+5. Off-site: Facebook group/page presence (they own the SERP), TikTok/YouTube explainers on RUPE/SICOES.

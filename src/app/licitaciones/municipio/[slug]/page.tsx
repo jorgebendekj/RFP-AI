@@ -3,8 +3,8 @@ import Link from "next/link";
 import SiteFooter from "@/components/SiteFooter";
 import { notFound } from "next/navigation";
 import {
-  getTenders, filterByCategory, sortByDate,
-  DEPARTMENTS, CATEGORIES,
+  getTenders, filterByMunicipality, sortByDate,
+  DEPARTMENTS, CATEGORIES, MUNICIPALITIES,
 } from "@/lib/publicTenders";
 
 export const revalidate = 3600;
@@ -12,36 +12,36 @@ export const revalidate = 3600;
 const siteUrl = "https://www.sicoesmonitor.com";
 
 export function generateStaticParams() {
-  return Object.keys(CATEGORIES).map((slug) => ({ slug }));
+  return Object.keys(MUNICIPALITIES).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
   const { slug } = await params;
-  const cat = CATEGORIES[slug];
-  if (!cat) return {};
+  const dept = MUNICIPALITIES[slug];
+  if (!dept) return {};
   return {
-    title: `Licitaciones de ${cat.name} en Bolivia 2026`,
-    description: `Convocatorias de ${cat.name} publicadas en SICOES Bolivia. Datos oficiales actualizados cada día. Alertas gratis.`,
-    alternates: { canonical: `${siteUrl}/licitaciones/categoria/${slug}` },
+    title: `SICOES ${dept.name}: convocatorias vigentes 2026`,
+    description: `Convocatorias y licitaciones vigentes del SICOES en ${dept.name}, Bolivia. Datos de sicoes.gob.bo cada día. Alertas gratis.`,
+    alternates: { canonical: `${siteUrl}/licitaciones/municipio/${slug}` },
     openGraph: {
-      title: `Licitaciones de ${cat.name} en Bolivia 2026`,
-      description: `Convocatorias y licitaciones de ${cat.name} del portal oficial SICOES Bolivia. Actualizadas diariamente.`,
-      url: `${siteUrl}/licitaciones/categoria/${slug}`,
+      title: `SICOES ${dept.name}: convocatorias vigentes 2026`,
+      description: `Licitaciones y convocatorias vigentes del portal SICOES en ${dept.name}, Bolivia. Datos oficiales actualizados diariamente.`,
+      url: `${siteUrl}/licitaciones/municipio/${slug}`,
     },
   };
 }
 
-export default async function CategoriaPage(
+export default async function DepartamentoPage(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const cat = CATEGORIES[slug];
-  if (!cat) notFound();
+  const dept = MUNICIPALITIES[slug];
+  if (!dept) notFound();
 
   const allTenders = await getTenders();
-  const filtered = sortByDate(filterByCategory(allTenders, slug)).slice(0, 40);
+  const filtered = sortByDate(filterByMunicipality(allTenders, slug)).slice(0, 40);
   const updatedAt = filtered[0]
     ? new Date(filtered[0].scrapedAt).toLocaleDateString("es-BO", { day: "numeric", month: "long", year: "numeric" })
     : null;
@@ -52,14 +52,14 @@ export default async function CategoriaPage(
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Inicio", item: siteUrl },
       { "@type": "ListItem", position: 2, name: "Licitaciones", item: `${siteUrl}/licitaciones` },
-      { "@type": "ListItem", position: 3, name: cat.name, item: `${siteUrl}/licitaciones/categoria/${slug}` },
+      { "@type": "ListItem", position: 3, name: dept.name, item: `${siteUrl}/licitaciones/municipio/${slug}` },
     ],
   };
 
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: `Licitaciones de ${cat.name} en Bolivia — SICOES`,
+    name: `Licitaciones SICOES en ${dept.name}`,
     numberOfItems: filtered.length,
     itemListElement: filtered.slice(0, 10).map((t, i) => ({
       "@type": "ListItem",
@@ -100,25 +100,26 @@ export default async function CategoriaPage(
           <span style={{ margin: "0 8px" }}>›</span>
           <Link href="/licitaciones" style={{ color: "var(--muted)", textDecoration: "none" }}>Licitaciones</Link>
           <span style={{ margin: "0 8px" }}>›</span>
-          <span style={{ color: "var(--accent)" }}>{cat.name}</span>
+          <span style={{ color: "var(--accent)" }}>{dept.name}</span>
         </nav>
 
         {/* ── Hero ────────────────────────────────────────────────── */}
         <section style={{ padding: "40px 0 36px" }}>
           <h1 style={{ fontSize: "clamp(1.5rem, 4vw, 2.25rem)", fontWeight: 700, marginBottom: "16px", lineHeight: 1.2 }}>
-            Licitaciones de <span style={{ color: "var(--accent)" }}>{cat.name}</span> en Bolivia<br />
-            <span style={{ fontSize: "0.7em", color: "var(--muted)", fontWeight: 400 }}>SICOES — Convocatorias Vigentes 2026</span>
+            Licitaciones <span style={{ color: "var(--accent)" }}>SICOES</span> en {dept.name}<br />
+            <span style={{ fontSize: "0.7em", color: "var(--muted)", fontWeight: 400 }}>Convocatorias Vigentes 2026</span>
           </h1>
           <p style={{ color: "var(--muted)", fontSize: "0.9375rem", maxWidth: "680px", lineHeight: 1.75, marginBottom: "12px" }}>
-            Todas las licitaciones y convocatorias de <strong style={{ color: "var(--text)" }}>{cat.name}</strong> publicadas
-            en el portal oficial <strong style={{ color: "var(--text)" }}>SICOES (sicoes.gob.bo)</strong> del Estado Plurinacional de Bolivia.
-            Las entidades públicas bolivianas contratan {cat.name.toLowerCase()} a través del sistema SICOES.
-            Encontrá aquí todas las convocatorias vigentes de este rubro en Bolivia.
+            Listado actualizado de licitaciones y convocatorias vigentes publicadas en el portal{" "}
+            <strong style={{ color: "var(--text)" }}>SICOES (sicoes.gob.bo)</strong> correspondientes al
+            municipio de <strong style={{ color: "var(--text)" }}>{dept.name}</strong>, Bolivia.
+            Las entidades del Estado en {dept.name} publican sus convocatorias de obras, bienes y servicios
+            en el portal oficial SICOES. Encontrá aquí todas las oportunidades vigentes.
           </p>
           {updatedAt && (
             <p style={{ color: "var(--muted)", fontSize: "0.8125rem" }}>
               Actualizado: <strong style={{ color: "var(--accent)" }}>{updatedAt}</strong>
-              {" "}· {filtered.length} licitaciones de {cat.name}
+              {" "}· {filtered.length} licitaciones en {dept.name}
             </p>
           )}
         </section>
@@ -126,13 +127,13 @@ export default async function CategoriaPage(
         {/* ── Tenders table ───────────────────────────────────────── */}
         <section aria-labelledby="table-heading" style={{ marginBottom: "56px" }}>
           <h2 id="table-heading" style={{ fontSize: "1.0625rem", fontWeight: 700, marginBottom: "20px" }}>
-            Convocatorias vigentes de {cat.name} — SICOES Bolivia 2026
+            Convocatorias vigentes en {dept.name} — SICOES 2026
           </h2>
 
           {filtered.length === 0 ? (
             <div className="card" style={{ padding: "40px", textAlign: "center" }}>
               <p style={{ color: "var(--muted)", marginBottom: "12px" }}>
-                No se encontraron licitaciones vigentes de {cat.name} en este momento.
+                No se encontraron licitaciones vigentes para {dept.name} en este momento.
               </p>
               <p style={{ color: "var(--muted)", fontSize: "0.875rem" }}>
                 El sistema actualiza los datos cada mañana desde sicoes.gob.bo.{" "}
@@ -189,32 +190,8 @@ export default async function CategoriaPage(
           )}
         </section>
 
-        {/* ── Other categories ────────────────────────────────────── */}
-        <section aria-labelledby="otros-cat" style={{ marginBottom: "48px" }}>
-          <h2 id="otros-cat" style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--muted)", marginBottom: "14px", letterSpacing: "0.05em" }}>
-            OTROS RUBROS — LICITACIONES SICOES BOLIVIA
-          </h2>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-            {Object.entries(CATEGORIES).map(([s, { name }]) => (
-              <Link
-                key={s}
-                href={`/licitaciones/categoria/${s}`}
-                style={{
-                  padding: "6px 14px", borderRadius: "100px", textDecoration: "none", fontSize: "0.8125rem",
-                  background: s === slug ? "rgba(0,119,255,0.2)" : "rgba(0,119,255,0.06)",
-                  border: `1px solid ${s === slug ? "#60A5FA" : "rgba(0,119,255,0.2)"}`,
-                  color: s === slug ? "#60A5FA" : "var(--muted)",
-                  fontWeight: s === slug ? 600 : 400,
-                }}
-              >
-                {name}
-              </Link>
-            ))}
-          </div>
-        </section>
-
         {/* ── Other departments ───────────────────────────────────── */}
-        <section aria-labelledby="otros-dept" style={{ marginBottom: "56px" }}>
+        <section aria-labelledby="otros-dept" style={{ marginBottom: "48px" }}>
           <h2 id="otros-dept" style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--muted)", marginBottom: "14px", letterSpacing: "0.05em" }}>
             LICITACIONES POR DEPARTAMENTO
           </h2>
@@ -225,7 +202,31 @@ export default async function CategoriaPage(
                 href={`/licitaciones/departamento/${s}`}
                 style={{
                   padding: "6px 14px", borderRadius: "100px", textDecoration: "none", fontSize: "0.8125rem",
-                  background: "rgba(0,229,195,0.06)", border: "1px solid rgba(0,229,195,0.2)",
+                  background: s === slug ? "rgba(0,229,195,0.15)" : "rgba(0,229,195,0.06)",
+                  border: `1px solid ${s === slug ? "var(--accent)" : "rgba(0,229,195,0.2)"}`,
+                  color: s === slug ? "var(--accent)" : "var(--muted)",
+                  fontWeight: s === slug ? 600 : 400,
+                }}
+              >
+                {name}
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Other categories ────────────────────────────────────── */}
+        <section aria-labelledby="otros-cat" style={{ marginBottom: "56px" }}>
+          <h2 id="otros-cat" style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--muted)", marginBottom: "14px", letterSpacing: "0.05em" }}>
+            LICITACIONES POR RUBRO
+          </h2>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+            {Object.entries(CATEGORIES).map(([s, { name }]) => (
+              <Link
+                key={s}
+                href={`/licitaciones/categoria/${s}`}
+                style={{
+                  padding: "6px 14px", borderRadius: "100px", textDecoration: "none", fontSize: "0.8125rem",
+                  background: "rgba(0,119,255,0.06)", border: "1px solid rgba(0,119,255,0.2)",
                   color: "var(--muted)",
                 }}
               >
@@ -243,11 +244,11 @@ export default async function CategoriaPage(
             border: "1px solid rgba(0,229,195,0.2)",
           }}>
             <h2 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "12px" }}>
-              Recibí alertas de licitaciones de {cat.name} — gratis
+              Recibí las licitaciones de {dept.name} filtradas para tu rubro
             </h2>
             <p style={{ color: "var(--muted)", fontSize: "0.9375rem", marginBottom: "24px", maxWidth: "500px", margin: "0 auto 24px", lineHeight: 1.7 }}>
-              Configurá tu perfil con el rubro {cat.name} y recibí cada mañana a las 9am solo las
-              licitaciones de SICOES relevantes para tu empresa. Sin costo.
+              SICOES Monitor analiza todas las convocatorias con IA y te envía cada mañana a las 9am
+              solo las que son relevantes para tu empresa. Gratis.
             </p>
             <Link href="/login" style={{
               display: "inline-flex", alignItems: "center", gap: "8px",
@@ -262,6 +263,26 @@ export default async function CategoriaPage(
       </div>
 
       {/* ── Footer ──────────────────────────────────────────────────────── */}
+      <section aria-labelledby="info-heading" style={{ maxWidth: "1100px", margin: "0 auto 56px", padding: "0 24px" }}>
+        <div className="card" style={{ padding: "28px 32px" }}>
+          <h2 id="info-heading" style={{ fontSize: "1.0625rem", fontWeight: 700, marginBottom: "12px" }}>
+            Cómo participar en las contrataciones públicas de {dept.name}
+          </h2>
+          <p style={{ color: "var(--muted)", fontSize: "0.875rem", lineHeight: 1.8, marginBottom: "12px" }}>
+            Los gobiernos municipales, gobernaciones, universidades y empresas estatales de {dept.name} publican sus
+            convocatorias en SICOES (sicoes.gob.bo). Para presentar una propuesta necesitas estar inscrito en el RUPE.
+            Revisa el documento base de contratación de cada proceso y respeta los plazos de presentación.
+          </p>
+          <p style={{ color: "var(--muted)", fontSize: "0.875rem", lineHeight: 1.8, margin: 0 }}>
+            Guías útiles:{" "}
+            <Link href="/blog/que-es-sicoes-bolivia" style={{ color: "var(--accent)" }}>qué es SICOES</Link>,{" "}
+            <Link href="/blog/como-registrarse-en-el-rupe-bolivia" style={{ color: "var(--accent)" }}>cómo registrarse en el RUPE</Link>,{" "}
+            <Link href="/blog/modalidades-de-contratacion-estatal-bolivia" style={{ color: "var(--accent)" }}>modalidades ANPE y Licitación Pública</Link> y{" "}
+            <Link href="/blog/sicoes-requerimiento-de-personal-2026" style={{ color: "var(--accent)" }}>requerimiento de personal</Link>.
+          </p>
+        </div>
+      </section>
+
       <SiteFooter />
     </div>
   );

@@ -17,6 +17,12 @@ Language: Spanish (es-BO). Country: Bolivia. Support: jbendek@ribentek.com
 - [Tender alert tools in Bolivia](https://www.sicoesmonitor.com/blog/herramientas-de-alertas-de-licitaciones-bolivia)
 - [How to win tenders in Bolivia](https://www.sicoesmonitor.com/blog/como-ganar-licitaciones-en-bolivia)
 
+- [SICOES requerimiento de personal 2026](https://www.sicoesmonitor.com/blog/sicoes-requerimiento-de-personal-2026)
+- [sicoes.gob.bo: how to enter and search](https://www.sicoesmonitor.com/blog/sicoes-gob-bo-como-ingresar-y-buscar-convocatorias)
+
+## Browse by municipality
+Sacaba, El Alto, Quillacollo, Tiquipaya, Vinto, Viacha, Sucre — https://www.sicoesmonitor.com/licitaciones/municipio/{slug}
+
 ## Browse by department
 La Paz, Santa Cruz, Cochabamba, Oruro, Potosí, Tarija, Chuquisaca, Beni, Pando — https://www.sicoesmonitor.com/licitaciones/departamento/{slug}
 

@@ -11,6 +11,10 @@ const departments = [
   "potosi", "tarija", "chuquisaca", "beni", "pando",
 ];
 
+const municipalities = [
+  "sacaba", "el-alto", "quillacollo", "tiquipaya", "vinto", "viacha", "sucre",
+];
+
 const categories = [
   "construccion", "tecnologia", "salud", "consultoria",
   "servicios", "mantenimiento", "logistica", "educacion",
@@ -35,6 +39,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "daily" as const,
       priority: 0.9,
+    })),
+
+    ...municipalities.map((slug) => ({
+      url: `${base}/licitaciones/municipio/${slug}`,
+      lastModified: now,
+      changeFrequency: "daily" as const,
+      priority: 0.8,
     })),
 
     ...categories.map((slug) => ({

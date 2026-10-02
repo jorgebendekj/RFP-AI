@@ -413,6 +413,23 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <section aria-labelledby="munis-heading" style={{ marginBottom: "96px", marginTop: "-56px" }}>
+          <h2 id="munis-heading" style={{ fontSize: "1rem", fontWeight: 600, textAlign: "center", marginBottom: "16px", color: "var(--muted)" }}>
+            Convocatorias SICOES por municipio
+          </h2>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: "center" }}>
+            {[
+              ["sacaba", "Sacaba"], ["el-alto", "El Alto"], ["quillacollo", "Quillacollo"],
+              ["tiquipaya", "Tiquipaya"], ["vinto", "Vinto"], ["viacha", "Viacha"], ["sucre", "Sucre"],
+            ].map(([slug, name]) => (
+              <Link key={slug} href={`/licitaciones/municipio/${slug}`} className="chip"
+                style={{ fontSize: "0.8125rem", padding: "6px 14px", textDecoration: "none" }}>
+                SICOES {name}
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {/* ── Guides ──────────────────────────────────────────────────────── */}
         <section aria-labelledby="guias-heading" style={{ marginBottom: "96px" }}>
           <div style={{ textAlign: "center", marginBottom: "32px" }}>

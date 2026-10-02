@@ -25,7 +25,7 @@ const DATE = "2026-10-02";
 export const BLOG_POSTS: BlogPost[] = [
   {
     slug: "que-es-sicoes-bolivia",
-    title: "¿Qué es SICOES en Bolivia y cómo funciona? Guía 2026",
+    title: "SICOES Bolivia: qué es, cómo funciona y cómo ver las convocatorias (2026)",
     description:
       "SICOES es el Sistema de Contrataciones Estatales de Bolivia (sicoes.gob.bo). Qué publica, quién puede participar, cómo se relaciona con el RUPE y cómo seguir las convocatorias.",
     tldr:
@@ -147,7 +147,7 @@ export const BLOG_POSTS: BlogPost[] = [
     description:
       "Diferencias entre Contratación Menor, ANPE y Licitación Pública en Bolivia, con los rangos de monto de referencia y qué implica cada una para tu empresa.",
     tldr:
-      "Según las referencias de las Normas Básicas del SABS, la contratación estatal en Bolivia se divide por monto: Contratación Menor (hasta Bs 20.000), ANPE (Apoyo Nacional a la Producción y Empleo, desde Bs 50.000 hasta Bs 1.000.000) y Licitación Pública (desde Bs 1.000.000, nacional hasta Bs 70.000.000 e internacional por encima).",
+      "Según las referencias de las Normas Básicas del SABS, la contratación estatal en Bolivia se divide por monto: Contratación Menor (hasta Bs 20.000), ANPE (Apoyo Nacional a la Producción y Empleo, desde Bs 50.000 hasta Bs 1.000.000) y Licitación Pública (desde Bs 1.000.000; la convocatoria pública internacional aplica a montos mucho mayores).",
     datePublished: DATE,
     dateModified: DATE,
     readingMinutes: 4,
@@ -158,8 +158,7 @@ export const BLOG_POSTS: BlogPost[] = [
         list: [
           "Contratación Menor: desde Bs 1 hasta Bs 20.000.",
           "ANPE (Apoyo Nacional a la Producción y Empleo): mayores a Bs 50.000 y hasta Bs 1.000.000; puede ejecutarse por Solicitud de Cotizaciones o Solicitud de Propuestas.",
-          "Licitación Pública Nacional: desde Bs 1.000.000 hasta Bs 70.000.000.",
-          "Licitación Pública Internacional: montos mayores a Bs 70.000.000.",
+          "Licitación Pública Nacional: desde Bs 1.000.000. El tope entre convocatoria nacional e internacional aparece con valores distintos según la fuente y la versión de la norma (por ejemplo Bs 40 millones en el Banco Central de Bolivia y Bs 70 millones en otras referencias), por lo que debes confirmarlo en la norma vigente.",
         ],
       },
       {
@@ -328,6 +327,107 @@ export const BLOG_POSTS: BlogPost[] = [
       { q: "¿Una PYME puede ganar licitaciones del Estado?", a: "Sí. Modalidades como ANPE están orientadas a proveedores nacionales en montos intermedios. Lo clave es cumplir requisitos y plazos." },
     ],
     related: ["modalidades-de-contratacion-estatal-bolivia", "como-registrarse-en-el-rupe-bolivia", "como-encontrar-licitaciones-en-bolivia"],
+  },
+  {
+    slug: "sicoes-requerimiento-de-personal-2026",
+    title: "SICOES requerimiento de personal 2026: cómo ver y postular a las convocatorias",
+    description:
+      "Qué es el requerimiento de personal en SICOES, dónde ver las convocatorias de empleo y consultorías del Estado en Bolivia y cómo preparar tu postulación.",
+    tldr:
+      "El portal SICOES (sicoes.gob.bo) tiene una sección de «Requerimiento de Personal» donde las entidades públicas de Bolivia publican convocatorias para contratar personal y consultores individuales. Para postular, revisa la convocatoria vigente de tu ciudad, verifica requisitos y plazo, y prepara tus formularios y documentos antes del cierre.",
+    datePublished: DATE,
+    dateModified: DATE,
+    readingMinutes: 4,
+    keywords: ["SICOES requerimiento de personal 2026", "SICOES empleos", "convocatorias de personal Bolivia", "consultor individual de línea", "empleos del Estado Bolivia"],
+    sections: [
+      {
+        heading: "¿Qué es el requerimiento de personal en SICOES?",
+        paragraphs: [
+          "Además de licitaciones de bienes, obras y servicios, las entidades públicas bolivianas publican en SICOES convocatorias para contratar personas: consultores individuales de línea, consultores por producto y personal eventual. Esta sección aparece en el portal como «Requerimiento de Personal».",
+          "Es una de las razones por las que «SICOES» es una búsqueda tan frecuente en Bolivia: muchas personas lo consultan para encontrar oportunidades laborales y de consultoría con el Estado.",
+        ],
+      },
+      {
+        heading: "Cómo ver las convocatorias de tu ciudad",
+        list: [
+          "Entra a sicoes.gob.bo y abre la sección Requerimiento de Personal.",
+          "Filtra por entidad o departamento (por ejemplo gobiernos municipales de Cochabamba, La Paz, Oruro o Santa Cruz).",
+          "Revisa el cargo, los requisitos, el plazo de postulación y la forma de presentación.",
+          "Anota la fecha y hora de cierre: los plazos suelen ser cortos.",
+        ],
+        ordered: true,
+      },
+      {
+        heading: "Cómo preparar tu postulación",
+        list: [
+          "Reúne con anticipación tu hoja de vida documentada, títulos y certificados.",
+          "Verifica si la convocatoria exige estar registrado en el RUPE.",
+          "Completa los formularios tal como lo pide la entidad, sin modificar formatos.",
+          "Presenta antes del cierre y guarda constancia.",
+        ],
+      },
+      {
+        heading: "No pierdas ninguna convocatoria",
+        paragraphs: [
+          "Las convocatorias de personal se publican a diario y cierran rápido. SICOES Monitor se enfoca hoy en las licitaciones de contratación (bienes, obras y servicios) y está evaluando incorporar alertas de requerimiento de personal. Si te interesa, escríbenos a jbendek@ribentek.com.",
+        ],
+      },
+    ],
+    faqs: [
+      { q: "¿Dónde veo las convocatorias de empleo en SICOES?", a: "En el portal oficial sicoes.gob.bo, en la sección Requerimiento de Personal." },
+      { q: "¿Necesito RUPE para postular a una consultoría?", a: "Depende de la convocatoria. Lee los requisitos del proceso; muchas piden registro en el RUPE." },
+      { q: "¿SICOES Monitor envía alertas de empleo?", a: "Por ahora enfoca licitaciones de contratación. Estamos evaluando alertas de personal; escribe a jbendek@ribentek.com para opinar." },
+    ],
+    related: ["que-es-sicoes-bolivia", "como-registrarse-en-el-rupe-bolivia", "como-encontrar-licitaciones-en-bolivia"],
+  },
+  {
+    slug: "sicoes-gob-bo-como-ingresar-y-buscar-convocatorias",
+    title: "sicoes.gob.bo: cómo ingresar, buscar convocatorias y usar tu cuenta RUPE",
+    description:
+      "Guía para entrar al portal sicoes.gob.bo, buscar convocatorias nacionales vigentes, descargar documentos y acceder a tu cuenta RUPE.",
+    tldr:
+      "En sicoes.gob.bo puedes buscar convocatorias vigentes sin cuenta; para presentar propuestas debes ingresar con tu usuario RUPE. Usa los filtros de la sección Convocatorias (tipo, entidad, departamento, fecha) y descarga el documento base de contratación antes de decidir si participas.",
+    datePublished: DATE,
+    dateModified: DATE,
+    readingMinutes: 3,
+    keywords: ["sicoes.gob.bo", "www sicoes gob bo", "ingresar a SICOES", "buscar convocatorias SICOES", "cuenta RUPE"],
+    sections: [
+      {
+        heading: "Qué puedes hacer sin cuenta",
+        list: [
+          "Ver las convocatorias vigentes y sus datos básicos (CUCE, entidad, objeto, fechas).",
+          "Consultar la normativa, formularios y manuales publicados.",
+        ],
+      },
+      {
+        heading: "Qué necesita cuenta RUPE",
+        list: [
+          "Presentar propuestas electrónicas.",
+          "Gestionar tu certificado RUPE y tus datos de proveedor.",
+        ],
+      },
+      {
+        heading: "Cómo buscar bien",
+        list: [
+          "Empieza por el tipo de convocatoria (nacional, personal, etc.).",
+          "Filtra por entidad o departamento para reducir ruido.",
+          "Ordena por fecha de presentación para priorizar lo que cierra primero.",
+          "Descarga el DBC y revisa requisitos antes de invertir tiempo.",
+        ],
+        ordered: true,
+      },
+      {
+        heading: "Atajo: alertas diarias",
+        paragraphs: [
+          "Si no quieres entrar cada día, SICOES Monitor te envía un resumen por email a las 9am (hora Bolivia) con las convocatorias más relevantes para tu rubro. También puedes explorar las convocatorias por departamento o municipio sin crear cuenta.",
+        ],
+      },
+    ],
+    faqs: [
+      { q: "¿Cuál es la dirección oficial de SICOES?", a: "https://www.sicoes.gob.bo. SICOES Monitor es un servicio independiente y no es el portal oficial." },
+      { q: "¿Olvidé mi acceso al RUPE, qué hago?", a: "Usa las opciones de recuperación del portal oficial o consulta los manuales publicados en sicoes.gob.bo." },
+    ],
+    related: ["que-es-sicoes-bolivia", "como-registrarse-en-el-rupe-bolivia", "como-encontrar-licitaciones-en-bolivia"],
   },
 ];
 

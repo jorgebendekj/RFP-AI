@@ -13,11 +13,11 @@ const siteUrl = "https://www.sicoesmonitor.com";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "SICOES Monitor — Alertas de Licitaciones Bolivia con IA",
+    default: "SICOES Bolivia: convocatorias y alertas diarias con IA",
     template: "%s · SICOES Monitor",
   },
   description:
-    "Monitoreá las licitaciones de SICOES (sicoes.gob.bo) con Inteligencia Artificial. Recibí cada mañana a las 9am un resumen personalizado de las convocatorias vigentes en Bolivia según tu rubro. Gratis.",
+    "Convocatorias y licitaciones de SICOES Bolivia con IA. Resumen diario a las 9am según tu rubro, por email. Gratis.",
   keywords: [
     "SICOES",
     "SICOES Bolivia",

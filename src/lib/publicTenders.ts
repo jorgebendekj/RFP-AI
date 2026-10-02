@@ -30,6 +30,18 @@ export const DEPARTMENTS: Record<string, { name: string; keywords: string[] }> =
   "pando":       { name: "Pando",       keywords: ["pando", "cobija"] },
 };
 
+// ─── Municipality config (high-volume "sicoes <ciudad>" queries) ─────────────
+
+export const MUNICIPALITIES: Record<string, { name: string; department: string; keywords: string[] }> = {
+  "sacaba":     { name: "Sacaba",     department: "Cochabamba", keywords: ["sacaba"] },
+  "el-alto":    { name: "El Alto",    department: "La Paz",     keywords: ["el alto"] },
+  "quillacollo":{ name: "Quillacollo",department: "Cochabamba", keywords: ["quillacollo"] },
+  "tiquipaya":  { name: "Tiquipaya",  department: "Cochabamba", keywords: ["tiquipaya"] },
+  "vinto":      { name: "Vinto",      department: "Cochabamba", keywords: ["vinto"] },
+  "viacha":     { name: "Viacha",     department: "La Paz",     keywords: ["viacha"] },
+  "sucre":      { name: "Sucre",      department: "Chuquisaca", keywords: ["sucre"] },
+};
+
 // ─── Category config ─────────────────────────────────────────────────────────
 
 export const CATEGORIES: Record<string, { name: string; slug: string }> = {
@@ -66,6 +78,15 @@ export function filterByDepartment(tenders: CachedTender[], slug: string): Cache
   return tenders.filter((t) => {
     const haystack = normalize(t.entidad);
     return dept.keywords.some((kw) => haystack.includes(normalize(kw)));
+  });
+}
+
+export function filterByMunicipality(tenders: CachedTender[], slug: string): CachedTender[] {
+  const m = MUNICIPALITIES[slug];
+  if (!m) return [];
+  return tenders.filter((t) => {
+    const haystack = normalize(t.entidad);
+    return m.keywords.some((kw) => haystack.includes(normalize(kw)));
   });
 }
 
