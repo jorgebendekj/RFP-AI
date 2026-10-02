@@ -1,4 +1,6 @@
 import Link from "next/link";
+import SiteFooter from "@/components/SiteFooter";
+import { BLOG_POSTS } from "@/lib/blogPosts";
 import {
   Radar,
   Bell,
@@ -14,51 +16,49 @@ import {
   Award,
 } from "lucide-react";
 
+const FAQS = [
+  {
+    q: "¿Qué es SICOES Monitor?",
+    a: "SICOES Monitor es una plataforma gratuita que monitorea el portal SICOES (sicoes.gob.bo) del Estado Plurinacional de Bolivia. Cada mañana lee las licitaciones y convocatorias vigentes y usa Inteligencia Artificial para enviarte por email solo las oportunidades relevantes para tu empresa según tu rubro.",
+  },
+  {
+    q: "¿Qué es SICOES en Bolivia?",
+    a: "SICOES es el Sistema de Contrataciones Estatales de Bolivia, el portal oficial (sicoes.gob.bo) donde las entidades públicas publican sus convocatorias para contratar bienes, obras y servicios. Para presentar propuestas hay que estar inscrito en el RUPE.",
+  },
+  {
+    q: "¿Cómo ver las licitaciones y convocatorias de SICOES automáticamente?",
+    a: "Crea tu cuenta en sicoesmonitor.com, elige tu rubro y activa las notificaciones. El sistema revisa SICOES cada día, analiza la relevancia con IA y te envía a las 9am (hora Bolivia) solo las contrataciones que coinciden con tu perfil.",
+  },
+  {
+    q: "¿Qué empresas bolivianas pueden usarlo?",
+    a: "Cualquier empresa que quiera participar en contrataciones del Estado boliviano: construcción, tecnología, salud, educación, energía, logística, consultoría, servicios generales y mantenimiento.",
+  },
+  {
+    q: "¿Es gratuito monitorear SICOES con SICOES Monitor?",
+    a: "Sí, es gratuito. Solo necesitas un email para registrarte y empezar a recibir alertas diarias de licitaciones y convocatorias de SICOES.",
+  },
+  {
+    q: "¿Los datos son oficiales del portal SICOES?",
+    a: "Los datos provienen del portal oficial sicoes.gob.bo. SICOES Monitor no inventa información: organiza y prioriza las licitaciones vigentes. Es un servicio independiente de Ribentek, no afiliado al Estado; confirma siempre plazos y detalles en el portal oficial.",
+  },
+  {
+    q: "¿Necesito el RUPE para participar en licitaciones en Bolivia?",
+    a: "Sí, para contratar con el Estado en procesos mayores a Bs 20.000 es necesario estar inscrito en el RUPE (Registro Único de Proveedores del Estado). Tenemos una guía paso a paso en nuestro blog.",
+  },
+  {
+    q: "¿Cómo contacto a soporte?",
+    a: "Escríbenos a jbendek@ribentek.com y te ayudamos con tu cuenta, tus alertas o cualquier problema con el servicio.",
+  },
+];
+
 const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "¿Qué es SICOES Monitor?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "SICOES Monitor es una plataforma gratuita que monitorea automáticamente el portal SICOES (sicoes.gob.bo) del Estado Plurinacional de Bolivia. Cada mañana escanea todas las licitaciones y convocatorias vigentes y usa Inteligencia Artificial para enviarte por email solo las oportunidades relevantes para tu empresa según tu rubro.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "¿Cómo ver las licitaciones y convocatorias de SICOES automáticamente?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Con SICOES Monitor podés recibir las licitaciones y convocatorias de sicoes.gob.bo automáticamente por email cada mañana a las 9am hora Bolivia. El sistema escanea el portal oficial, analiza la relevancia con IA y te envía solo las contrataciones que coinciden con tu rubro y palabras clave.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "¿Qué tipos de empresas bolivianas pueden usar SICOES Monitor?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Cualquier empresa que quiera participar en contrataciones y licitaciones del Estado boliviano. La plataforma tiene perfiles para construcción, tecnología, salud, educación, energía, logística, consultoría, servicios generales y mantenimiento.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "¿Es gratuito monitorear SICOES?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Sí, SICOES Monitor es completamente gratuito. Solo necesitás un email para registrarte, elegir tu rubro y empezar a recibir alertas diarias de licitaciones y convocatorias de SICOES.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "¿Los datos de licitaciones son oficiales del portal SICOES?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Sí. Todos los datos provienen directamente del portal oficial sicoes.gob.bo del Estado Plurinacional de Bolivia. SICOES Monitor nunca inventa ni modifica información — solo organiza y prioriza las licitaciones vigentes para tu empresa.",
-      },
-    },
-  ],
+  mainEntity: FAQS.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
 };
 
 export default function LandingPage() {
@@ -95,6 +95,11 @@ export default function LandingPage() {
             color: "var(--muted)", textDecoration: "none", fontSize: "0.875rem",
           }}>
             Licitaciones
+          </Link>
+          <Link href="/blog" style={{
+            color: "var(--muted)", textDecoration: "none", fontSize: "0.875rem",
+          }}>
+            Blog
           </Link>
           <Link href="/login" style={{
             display: "flex", alignItems: "center", gap: "6px",
@@ -165,6 +170,18 @@ export default function LandingPage() {
             }}>
               Cómo funciona
             </a>
+          </div>
+        </section>
+
+        {/* ── Answer block (quotable summary for search & AI answer engines) ── */}
+        <section aria-label="Resumen" style={{ marginBottom: "80px" }}>
+          <div className="card" style={{ padding: "28px 32px", borderLeft: "3px solid var(--accent)" }}>
+            <p style={{ margin: 0, lineHeight: 1.8, fontSize: "0.9375rem" }}>
+              <strong>SICOES Monitor</strong> es un servicio gratuito para empresas de Bolivia que lee las
+              licitaciones vigentes del Sistema de Contrataciones Estatales (SICOES, sicoes.gob.bo), las
+              prioriza con inteligencia artificial según tu rubro y te envía un resumen por email cada
+              mañana a las 9am (hora Bolivia). Es un producto independiente de Ribentek.
+            </p>
           </div>
         </section>
 
@@ -372,6 +389,51 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ── Explore by department ──────────────────────────────────────── */}
+        <section aria-labelledby="deptos-heading" style={{ marginBottom: "96px" }}>
+          <div style={{ textAlign: "center", marginBottom: "32px" }}>
+            <h2 id="deptos-heading" style={{ fontSize: "clamp(1.25rem, 2.5vw, 1.875rem)", fontWeight: 700, marginBottom: "10px" }}>
+              Licitaciones en Bolivia por departamento
+            </h2>
+            <p style={{ color: "var(--muted)", fontSize: "0.9375rem" }}>
+              Explora las convocatorias vigentes de SICOES sin crear cuenta
+            </p>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", justifyContent: "center" }}>
+            {[
+              ["la-paz", "La Paz"], ["santa-cruz", "Santa Cruz"], ["cochabamba", "Cochabamba"],
+              ["oruro", "Oruro"], ["potosi", "Potosí"], ["tarija", "Tarija"],
+              ["chuquisaca", "Chuquisaca"], ["beni", "Beni"], ["pando", "Pando"],
+            ].map(([slug, name]) => (
+              <Link key={slug} href={`/licitaciones/departamento/${slug}`} className="chip"
+                style={{ fontSize: "0.875rem", padding: "8px 18px", textDecoration: "none" }}>
+                Licitaciones {name}
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Guides ──────────────────────────────────────────────────────── */}
+        <section aria-labelledby="guias-heading" style={{ marginBottom: "96px" }}>
+          <div style={{ textAlign: "center", marginBottom: "32px" }}>
+            <h2 id="guias-heading" style={{ fontSize: "clamp(1.25rem, 2.5vw, 1.875rem)", fontWeight: 700, marginBottom: "10px" }}>
+              Guías para vender al Estado boliviano
+            </h2>
+            <p style={{ color: "var(--muted)", fontSize: "0.9375rem" }}>
+              <Link href="/blog" style={{ color: "var(--accent)", textDecoration: "none" }}>Ver todas las guías →</Link>
+            </p>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "16px" }}>
+            {BLOG_POSTS.slice(0, 3).map((p) => (
+              <Link key={p.slug} href={`/blog/${p.slug}`} className="card"
+                style={{ padding: "24px", textDecoration: "none", color: "var(--text)" }}>
+                <h3 style={{ fontSize: "0.9375rem", fontWeight: 600, marginBottom: "8px" }}>{p.title}</h3>
+                <p style={{ color: "var(--muted)", fontSize: "0.8125rem", lineHeight: 1.65, margin: 0 }}>{p.description}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {/* ── Ribentek credibility ─────────────────────────────────────── */}
         <section aria-labelledby="ribentek-heading" style={{ marginBottom: "96px" }}>
           <div className="card" style={{
@@ -462,28 +524,7 @@ export default function LandingPage() {
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "12px", maxWidth: "760px", margin: "0 auto" }}>
-            {[
-              {
-                q: "¿Qué es SICOES Monitor?",
-                a: "SICOES Monitor es una plataforma gratuita que monitorea el portal SICOES (sicoes.gob.bo) automáticamente. Cada mañana escanea todas las licitaciones y convocatorias vigentes y usa IA para enviarte por email solo las oportunidades relevantes para tu empresa según tu rubro.",
-              },
-              {
-                q: "¿Cómo ver las convocatorias y licitaciones de SICOES automáticamente?",
-                a: "Registrate en sicoesmonitor.com, elegí tu rubro y activá las notificaciones. El sistema escanea sicoes.gob.bo cada día, analiza la relevancia con IA y te envía solo las contrataciones que coinciden con tu perfil a las 9am hora Bolivia.",
-              },
-              {
-                q: "¿Qué empresas bolivianas pueden usarlo?",
-                a: "Cualquier empresa que quiera participar en contrataciones del Estado boliviano: construcción, tecnología, salud, educación, energía, logística, consultoría, servicios generales y mantenimiento.",
-              },
-              {
-                q: "¿Es gratuito monitorear SICOES?",
-                a: "Sí, completamente gratuito. Solo necesitás un email para registrarte y empezar a recibir alertas diarias de licitaciones y convocatorias de SICOES.",
-              },
-              {
-                q: "¿Los datos son oficiales del portal SICOES?",
-                a: "Sí. Todos los datos provienen directamente de sicoes.gob.bo del Estado Plurinacional de Bolivia. SICOES Monitor no inventa información — organiza y prioriza las licitaciones vigentes para tu empresa.",
-              },
-            ].map((item) => (
+            {FAQS.map((item) => (
               <div key={item.q} className="card" style={{ padding: "24px 28px" }}>
                 <h3 style={{ fontSize: "0.9375rem", fontWeight: 600, marginBottom: "10px", color: "var(--text)" }}>
                   {item.q}
@@ -530,36 +571,7 @@ export default function LandingPage() {
         </section>
       </div>
 
-      {/* ── Footer ───────────────────────────────────────────────────────── */}
-      <footer style={{ borderTop: "1px solid var(--border)", padding: "32px 24px" }}>
-        <div style={{
-          maxWidth: "1100px", margin: "0 auto",
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          flexWrap: "wrap", gap: "16px",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Radar size={16} color="var(--accent)" />
-            <span style={{ color: "var(--muted)", fontSize: "0.8125rem" }}>
-              SICOES Monitor · licitaciones Bolivia · sicoesmonitor.com
-            </span>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <Shield size={13} color="var(--muted)" />
-            <span style={{ color: "var(--muted)", fontSize: "0.8125rem" }}>
-              Powered by{" "}
-              <a
-                href="https://ribentek.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}
-              >
-                Ribentek
-              </a>
-              {" "}· 25+ proyectos · 5 países · 6 industrias
-            </span>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

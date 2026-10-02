@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import SiteFooter from "@/components/SiteFooter";
 import { notFound } from "next/navigation";
 import {
   getTenders, filterByDepartment, sortByDate,
@@ -262,14 +263,7 @@ export default async function DepartamentoPage(
       </div>
 
       {/* ── Footer ──────────────────────────────────────────────────────── */}
-      <footer style={{ borderTop: "1px solid var(--border)", padding: "24px", textAlign: "center", color: "var(--muted)", fontSize: "0.8125rem" }}>
-        <p>
-          <Link href="/" style={{ color: "var(--accent)", textDecoration: "none" }}>SICOES Monitor</Link>
-          {" "}· Datos oficiales de{" "}
-          <a href="https://sicoes.gob.bo" target="_blank" rel="noopener noreferrer" style={{ color: "var(--muted)" }}>sicoes.gob.bo</a>
-          {" "}· Bolivia
-        </p>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

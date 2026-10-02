@@ -126,12 +126,29 @@ const websiteJsonLd = {
   },
 };
 
+const orgJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Ribentek",
+  url: "https://ribentek.com",
+  email: "jbendek@ribentek.com",
+  brand: { "@type": "Brand", name: "SICOES Monitor", url: siteUrl },
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "customer support",
+    email: "jbendek@ribentek.com",
+    areaServed: "BO",
+    availableLanguage: "Spanish",
+  },
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es">
       <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
       </head>
       <body className={ibmPlexMono.variable}>{children}</body>
     </html>

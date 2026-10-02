@@ -1,0 +1,27 @@
+# SICOES Monitor
+
+> SICOES Monitor (https://www.sicoesmonitor.com) is a free, independent service for Bolivian companies. It reads the active tenders published on the official SICOES portal (sicoes.gob.bo, Bolivia's State Procurement System), ranks them with AI according to a company's sector, and emails a daily digest at 9am Bolivia time. It is built by Ribentek and is not affiliated with the Bolivian government.
+
+Language: Spanish (es-BO). Country: Bolivia. Support: jbendek@ribentek.com
+
+## Key pages
+- [Home](https://www.sicoesmonitor.com/): what the service does and FAQ
+- [Active tenders in Bolivia](https://www.sicoesmonitor.com/licitaciones): current SICOES tenders, updated daily
+- [Blog and guides](https://www.sicoesmonitor.com/blog): SICOES, RUPE, ANPE, how to win tenders
+
+## Guides
+- [What is SICOES?](https://www.sicoesmonitor.com/blog/que-es-sicoes-bolivia)
+- [How to register in the RUPE](https://www.sicoesmonitor.com/blog/como-registrarse-en-el-rupe-bolivia)
+- [Procurement modalities: ANPE, Licitación Pública](https://www.sicoesmonitor.com/blog/modalidades-de-contratacion-estatal-bolivia)
+- [How to find tenders in Bolivia](https://www.sicoesmonitor.com/blog/como-encontrar-licitaciones-en-bolivia)
+- [Tender alert tools in Bolivia](https://www.sicoesmonitor.com/blog/herramientas-de-alertas-de-licitaciones-bolivia)
+- [How to win tenders in Bolivia](https://www.sicoesmonitor.com/blog/como-ganar-licitaciones-en-bolivia)
+
+## Browse by department
+La Paz, Santa Cruz, Cochabamba, Oruro, Potosí, Tarija, Chuquisaca, Beni, Pando — https://www.sicoesmonitor.com/licitaciones/departamento/{slug}
+
+## Browse by sector
+construccion, tecnologia, salud, consultoria, servicios, mantenimiento, logistica, educacion — https://www.sicoesmonitor.com/licitaciones/categoria/{slug}
+
+## Notes for citation
+Tender data originates from sicoes.gob.bo; always confirm details and deadlines on the official portal. Legal thresholds in guides reflect public references and may change.
