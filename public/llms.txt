@@ -19,6 +19,9 @@ Language: Spanish (es-BO). Country: Bolivia. Support: jbendek@ribentek.com
 
 - [SICOES requerimiento de personal 2026](https://www.sicoesmonitor.com/blog/sicoes-requerimiento-de-personal-2026)
 - [sicoes.gob.bo: how to enter and search](https://www.sicoesmonitor.com/blog/sicoes-gob-bo-como-ingresar-y-buscar-convocatorias)
+- [Documento Base de Contratación (DBC): how to read it](https://www.sicoesmonitor.com/blog/documento-base-de-contratacion-dbc-bolivia)
+- [12 mistakes that disqualify tender proposals in Bolivia](https://www.sicoesmonitor.com/blog/errores-que-descalifican-propuestas-licitaciones-bolivia)
+- [Glossary of Bolivian public procurement terms](https://www.sicoesmonitor.com/blog/glosario-contrataciones-estatales-bolivia)
 
 ## Browse by municipality
 Sacaba, El Alto, Quillacollo, Tiquipaya, Vinto, Viacha, Sucre — https://www.sicoesmonitor.com/licitaciones/municipio/{slug}

@@ -2,7 +2,7 @@ import type { BlogPost } from "@/lib/blogTypes";
 
 const post: BlogPost = {
   slug: "modalidades-de-contratacion-estatal-bolivia",
-  title: "Modalidades de contratación estatal en Bolivia: Menor, ANPE y LP",
+  title: "Modalidades de contratación estatal en Bolivia: Menor, ANPE, LP",
   description:
     "Compara las modalidades de contratación estatal en Bolivia: Contratación Menor, ANPE y Licitación Pública. Montos según el D.S. 0181, garantías y cómo elegir.",
   tldr:
@@ -287,12 +287,10 @@ const post: BlogPost = {
           type: "p",
           text: "Una guía más amplia para moverte en el portal está en [sicoes.gob.bo: cómo ingresar y buscar convocatorias](/blog/sicoes-gob-bo-como-ingresar-y-buscar-convocatorias).",
         },
-      ],
-    },
-    {
-      id: "errores-frecuentes",
-      heading: "¿Qué errores se cometen al interpretar las modalidades?",
-      blocks: [
+        {
+          type: "h3",
+          text: "Errores frecuentes al interpretar las modalidades",
+        },
         {
           type: "p",
           text: "Los errores más comunes son usar cifras desactualizadas, asumir que todas las entidades aplican la misma práctica, confundir los rangos de monto, no verificar las garantías y no leer el DBC completo. Todos se evitan contrastando la información con la norma y con el documento del proceso.",

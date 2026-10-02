@@ -320,12 +320,10 @@ const post: BlogPost = {
           title: "Cada DBC manda",
           text: "Que un cargo pida RUPE y SIGEP no significa que todos lo hagan. Lo que cuenta es lo que dice el DBC del proceso al que postulas.",
         },
-      ],
-    },
-    {
-      id: "persona-natural-vs-empresa",
-      heading: "¿En qué se diferencia el registro de una persona natural y el de una empresa?",
-      blocks: [
+        {
+          type: "h3",
+          text: "Persona natural y empresa: qué cambia",
+        },
         {
           type: "p",
           text: "Las dos modalidades comparten el punto de entrada (sicoes.gob.bo, RUPE, «Registrarme») y la estructura de dos etapas, pero cada una tiene su propia guía operativa. La tabla resume solo lo que está confirmado; para el detalle de campos y respaldos, usa los manuales oficiales.",

@@ -2,7 +2,7 @@ import type { BlogPost } from "@/lib/blogTypes";
 
 const post: BlogPost = {
   slug: "errores-que-descalifican-propuestas-licitaciones-bolivia",
-  title: "12 errores que descalifican propuestas en licitaciones en Bolivia",
+  title: "12 errores que descalifican propuestas en licitaciones Bolivia",
   description:
     "Los 12 errores más evitables que pueden descalificar una propuesta en licitaciones de Bolivia: causa, consecuencia y cómo evitarlos, con checklist pre-envío.",
   tldr:
