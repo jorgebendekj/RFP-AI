@@ -3,6 +3,7 @@ import type { BlogPost } from "@/lib/blogTypes";
 const post: BlogPost = {
   slug: "como-encontrar-licitaciones-en-bolivia",
   title: "Cómo encontrar licitaciones en Bolivia: 5 métodos y alertas",
+  seoTitle: "Cómo encontrar licitaciones en Bolivia: 5 métodos (2026)",
   description:
     "Aprende a encontrar licitaciones en Bolivia: portal SICOES, filtros, PAC, palabras clave por rubro, alertas por email y una rutina diaria de 10 minutos.",
   tldr:

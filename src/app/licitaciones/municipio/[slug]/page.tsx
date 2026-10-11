@@ -21,15 +21,17 @@ export async function generateMetadata(
   const { slug } = await params;
   const dept = MUNICIPALITIES[slug];
   if (!dept) return {};
+  const count = filterByMunicipality(await getTenders(), slug).length;
+  const title = `SICOES ${dept.name}: convocatorias vigentes hoy (2026)`;
+  const description = count > 0
+    ? `${count} convocatorias SICOES vigentes en ${dept.name}, Bolivia, actualizadas a diario. Entidad, objeto y fecha de cierre de cada proceso. Alertas gratis por email.`
+    : `Convocatorias y licitaciones SICOES en ${dept.name}, Bolivia. Datos de sicoes.gob.bo cada día. Alertas gratis por email.`;
+  const url = `${siteUrl}/licitaciones/municipio/${slug}`;
   return {
-    title: `SICOES ${dept.name}: convocatorias vigentes 2026`,
-    description: `Convocatorias y licitaciones vigentes del SICOES en ${dept.name}, Bolivia. Datos de sicoes.gob.bo cada día. Alertas gratis.`,
-    alternates: { canonical: `${siteUrl}/licitaciones/municipio/${slug}` },
-    openGraph: {
-      title: `SICOES ${dept.name}: convocatorias vigentes 2026`,
-      description: `Licitaciones y convocatorias vigentes del portal SICOES en ${dept.name}, Bolivia. Datos oficiales actualizados diariamente.`,
-      url: `${siteUrl}/licitaciones/municipio/${slug}`,
-    },
+    title: { absolute: title },
+    description,
+    alternates: { canonical: url },
+    openGraph: { title, description, url },
   };
 }
 
@@ -278,7 +280,9 @@ export default async function DepartamentoPage(
             <Link href="/blog/que-es-sicoes-bolivia" style={{ color: "var(--accent)" }}>qué es SICOES</Link>,{" "}
             <Link href="/blog/como-registrarse-en-el-rupe-bolivia" style={{ color: "var(--accent)" }}>cómo registrarse en el RUPE</Link>,{" "}
             <Link href="/blog/modalidades-de-contratacion-estatal-bolivia" style={{ color: "var(--accent)" }}>modalidades ANPE y Licitación Pública</Link> y{" "}
-            <Link href="/blog/sicoes-requerimiento-de-personal-2026" style={{ color: "var(--accent)" }}>requerimiento de personal</Link>.
+            <Link href="/blog/convocatorias-de-personal-sicoes-por-ciudad" style={{ color: "var(--accent)" }}>convocatorias de personal por ciudad</Link>,{" "}
+            <Link href="/blog/que-es-anpe-bolivia" style={{ color: "var(--accent)" }}>qué es el ANPE</Link> y{" "}
+            <Link href="/blog/licitaciones-bolivia-por-departamento" style={{ color: "var(--accent)" }}>licitaciones por departamento</Link>.
           </p>
         </div>
       </section>

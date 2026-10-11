@@ -3,6 +3,7 @@ import type { BlogPost } from "@/lib/blogTypes";
 const post: BlogPost = {
   slug: "herramientas-de-alertas-de-licitaciones-bolivia",
   title: "Herramientas de alertas de licitaciones en Bolivia: cómo elegir",
+  seoTitle: "Alertas de licitaciones en Bolivia: cómo elegir (2026)",
   description:
     "Cómo elegir una herramienta de alertas de licitaciones en Bolivia: comparativa neutral de criterios, guía por tipo de empresa, preguntas clave y riesgos.",
   tldr:

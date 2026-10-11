@@ -3,6 +3,7 @@ import type { BlogPost } from "@/lib/blogTypes";
 const post: BlogPost = {
   slug: "como-ganar-licitaciones-en-bolivia",
   title: "Cómo ganar licitaciones en Bolivia: guía para empresas y PYMES",
+  seoTitle: "Cómo ganar licitaciones en Bolivia: guía para PYMES",
   description:
     "Guía práctica para ganar licitaciones en Bolivia: preparación, RUPE, go/no-go, lectura del DBC, propuesta, cronograma, garantías, consorcios y ANPE para pymes.",
   tldr:

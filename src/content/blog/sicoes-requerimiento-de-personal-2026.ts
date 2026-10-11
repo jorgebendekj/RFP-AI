@@ -3,6 +3,7 @@ import type { BlogPost } from "@/lib/blogTypes";
 const post: BlogPost = {
   slug: "sicoes-requerimiento-de-personal-2026",
   title: "SICOES requerimiento de personal 2026: cómo postular",
+  seoTitle: "SICOES requerimiento de personal 2026: cómo postular",
   description:
     "Cómo ver y postular a convocatorias de personal y consultoría individual en SICOES 2026: tipos, requisitos observados, etapas, hoja de vida y errores comunes.",
   tldr:

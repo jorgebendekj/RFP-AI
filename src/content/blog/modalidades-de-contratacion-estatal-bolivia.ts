@@ -3,6 +3,7 @@ import type { BlogPost } from "@/lib/blogTypes";
 const post: BlogPost = {
   slug: "modalidades-de-contratacion-estatal-bolivia",
   title: "Modalidades de contratación estatal en Bolivia: Menor, ANPE, LP",
+  seoTitle: "Modalidades de contratación en Bolivia: ANPE, Menor y LP",
   description:
     "Compara las modalidades de contratación estatal en Bolivia: Contratación Menor, ANPE y Licitación Pública. Montos según el D.S. 0181, garantías y cómo elegir.",
   tldr:

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: "SICOES Bolivia: convocatorias y alertas diarias con IA",
-    template: "%s · SICOES Monitor",
+    template: "%s | SICOES Monitor",
   },
   description:
     "Convocatorias y licitaciones de SICOES Bolivia con IA. Resumen diario a las 9am según tu rubro, por email. Gratis.",
@@ -56,6 +56,7 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: siteUrl,
+    types: { "application/rss+xml": `${siteUrl}/blog/feed.xml` },
   },
   openGraph: {
     type: "website",

@@ -3,6 +3,7 @@ import type { BlogPost } from "@/lib/blogTypes";
 const post: BlogPost = {
   slug: "como-registrarse-en-el-rupe-bolivia",
   title: "Cómo registrarse en el RUPE (Bolivia): paso a paso y certificado",
+  seoTitle: "Cómo registrarse en el RUPE Bolivia: paso a paso (2026)",
   description:
     "Guía para registrarte en el RUPE de Bolivia: quién debe hacerlo, datos que preparar, las dos etapas, activación por correo, certificado y errores frecuentes.",
   tldr:

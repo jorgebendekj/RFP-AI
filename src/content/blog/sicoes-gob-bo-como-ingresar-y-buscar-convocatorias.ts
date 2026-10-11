@@ -3,6 +3,7 @@ import type { BlogPost } from "@/lib/blogTypes";
 const post: BlogPost = {
   slug: "sicoes-gob-bo-como-ingresar-y-buscar-convocatorias",
   title: "sicoes.gob.bo: cómo ingresar, buscar convocatorias y RUPE",
+  seoTitle: "sicoes.gob.bo: cómo ingresar y buscar convocatorias",
   description:
     "Guía de sicoes.gob.bo: qué puedes hacer sin cuenta, cómo usar tu cuenta RUPE, buscar convocatorias, descargar el DBC y evitar problemas de acceso y estafas.",
   tldr:

@@ -20,6 +20,8 @@ export interface BlogSection {
 export interface BlogPost {
   slug: string;
   title: string;
+  /** Google title (<= 58 chars, keyword first). Falls back to `title`. */
+  seoTitle?: string;
   /** 120–160 chars, meta description */
   description: string;
   /** Direct, quotable 40–70 word answer shown first (optimized for AI answer engines) */

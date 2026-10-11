@@ -8,7 +8,7 @@ export const revalidate = 3600;
 const siteUrl = "https://www.sicoesmonitor.com";
 
 export const metadata: Metadata = {
-  title: "Convocatorias SICOES vigentes 2026 en Bolivia",
+  title: { absolute: "Convocatorias SICOES vigentes hoy en Bolivia (2026)" },
   description:
     "Licitaciones y convocatorias vigentes de SICOES (sicoes.gob.bo) en Bolivia. Filtra por departamento y rubro. Actualizado a diario.",
   alternates: { canonical: `${siteUrl}/licitaciones` },

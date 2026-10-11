@@ -3,6 +3,7 @@ import type { BlogPost } from "@/lib/blogTypes";
 const post: BlogPost = {
   slug: "que-es-sicoes-bolivia",
   title: "SICOES Bolivia: qué es, cómo funciona y convocatorias (2026)",
+  seoTitle: "¿Qué es SICOES Bolivia? Convocatorias y cómo usarlo",
   description:
     "Guía completa del SICOES de Bolivia: qué es, quién lo administra, qué se publica, cómo ver las convocatorias y cómo seguirlas cada día. Actualizada 2026.",
   tldr: "El SICOES (Sistema de Contrataciones Estatales de Bolivia) es el portal oficial, sicoes.gob.bo, administrado por el Ministerio de Economía y Finanzas Públicas, donde las entidades públicas publican convocatorias para contratar bienes, obras, servicios y consultorías. Cada proceso tiene un CUCE. Para ofertar se necesita estar registrado en el RUPE y leer el DBC de cada proceso.",

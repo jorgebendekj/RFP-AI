@@ -3,6 +3,7 @@ import type { BlogPost } from "@/lib/blogTypes";
 const post: BlogPost = {
   slug: "documento-base-de-contratacion-dbc-bolivia",
   title: "Documento Base de Contratación (DBC): qué es y cómo leerlo",
+  seoTitle: "¿Qué es el DBC en Bolivia? Cómo leerlo antes de ofertar",
   description:
     "Qué es el DBC en las contrataciones estatales de Bolivia, qué contiene y cómo leerlo antes de presentar tu propuesta, con checklist y tabla por sección.",
   tldr:

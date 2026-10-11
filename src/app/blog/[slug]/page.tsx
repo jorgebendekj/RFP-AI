@@ -15,13 +15,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   if (!post) return {};
   const url = `${SITE_URL}/blog/${post.slug}`;
   return {
-    title: post.title,
+    title: { absolute: post.seoTitle ?? post.title },
     description: post.description,
     keywords: post.keywords,
     alternates: { canonical: url },
     openGraph: {
       type: "article",
-      title: post.title,
+      title: post.seoTitle ?? post.title,
       description: post.description,
       url,
       publishedTime: post.datePublished,

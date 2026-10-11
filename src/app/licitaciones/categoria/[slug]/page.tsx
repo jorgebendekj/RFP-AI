@@ -21,15 +21,17 @@ export async function generateMetadata(
   const { slug } = await params;
   const cat = CATEGORIES[slug];
   if (!cat) return {};
+  const count = filterByCategory(await getTenders(), slug).length;
+  const title = `Licitaciones de ${cat.name} en Bolivia (2026)`;
+  const description = count > 0
+    ? `${count} convocatorias SICOES vigentes de ${cat.name} en Bolivia, actualizadas a diario. Entidad, objeto y fecha de cierre de cada proceso. Alertas gratis por email.`
+    : `Convocatorias y licitaciones SICOES de ${cat.name} en Bolivia. Datos de sicoes.gob.bo cada día. Alertas gratis por email.`;
+  const url = `${siteUrl}/licitaciones/categoria/${slug}`;
   return {
-    title: `Licitaciones de ${cat.name} en Bolivia 2026`,
-    description: `Convocatorias de ${cat.name} publicadas en SICOES Bolivia. Datos oficiales actualizados cada día. Alertas gratis.`,
-    alternates: { canonical: `${siteUrl}/licitaciones/categoria/${slug}` },
-    openGraph: {
-      title: `Licitaciones de ${cat.name} en Bolivia 2026`,
-      description: `Convocatorias y licitaciones de ${cat.name} del portal oficial SICOES Bolivia. Actualizadas diariamente.`,
-      url: `${siteUrl}/licitaciones/categoria/${slug}`,
-    },
+    title: { absolute: title },
+    description,
+    alternates: { canonical: url },
+    openGraph: { title, description, url },
   };
 }
 

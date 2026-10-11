@@ -3,6 +3,7 @@ import type { BlogPost } from "@/lib/blogTypes";
 const post: BlogPost = {
   slug: "glosario-contrataciones-estatales-bolivia",
   title: "Glosario de contrataciones estatales en Bolivia: SICOES, RUPE, DBC",
+  seoTitle: "Glosario SICOES: RUPE, DBC, ANPE, CUCE y más términos",
   description:
     "Glosario con más de 40 términos de contrataciones estatales en Bolivia: SICOES, RUPE, DBC, ANPE, CUCE, garantías, modalidades y roles, explicados con claridad.",
   tldr: "Este glosario explica más de 40 términos de las contrataciones estatales en Bolivia: SICOES (portal oficial sicoes.gob.bo), RUPE (registro de proveedores), DBC (documento base de contratación), ANPE, CUCE, modalidades, garantías, roles y contratos. Las definiciones son generales; el DBC de cada proceso y la norma vigente (D.S. 0181 y sus modificaciones) mandan.",

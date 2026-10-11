@@ -5,7 +5,7 @@ import { BLOG_POSTS, readingMinutes } from "@/lib/blogPosts";
 import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Blog y guías de SICOES, RUPE y licitaciones en Bolivia",
+  title: { absolute: "Guías de SICOES, RUPE y licitaciones en Bolivia" },
   description:
     "Guías completas sobre SICOES, RUPE, ANPE, DBC y cómo participar y ganar licitaciones del Estado en Bolivia. Actualizado 2026.",
   alternates: { canonical: `${SITE_URL}/blog` },
