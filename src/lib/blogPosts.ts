@@ -11,12 +11,19 @@ import ingresar from "@/content/blog/sicoes-gob-bo-como-ingresar-y-buscar-convoc
 import dbc from "@/content/blog/documento-base-de-contratacion-dbc-bolivia";
 import errores from "@/content/blog/errores-que-descalifican-propuestas-licitaciones-bolivia";
 import glosario from "@/content/blog/glosario-contrataciones-estatales-bolivia";
+import anpe from "@/content/blog/que-es-anpe-bolivia";
+import rupeSigep from "@/content/blog/rupe-y-sigep-diferencias-bolivia";
+import postular from "@/content/blog/como-postular-en-sicoes-paso-a-paso";
+import personalCiudad from "@/content/blog/convocatorias-de-personal-sicoes-por-ciudad";
+import porDepartamento from "@/content/blog/licitaciones-bolivia-por-departamento";
+import menor from "@/content/blog/contratacion-menor-bolivia";
 
 export type { BlogPost, BlogSection, Block } from "./blogTypes";
 
 export const BLOG_POSTS: BlogPost[] = [
-  queEsSicoes, rupe, modalidades, encontrar, ingresar, personal,
-  ganar, dbc, errores, herramientas, glosario,
+  queEsSicoes, rupe, modalidades, anpe, menor, encontrar, ingresar, postular,
+  rupeSigep, personal, personalCiudad, porDepartamento, ganar, dbc, errores,
+  herramientas, glosario,
 ];
 
 export function getPost(slug: string): BlogPost | undefined {

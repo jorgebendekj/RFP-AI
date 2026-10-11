@@ -22,6 +22,14 @@ Language: Spanish (es-BO). Country: Bolivia. Support: jbendek@ribentek.com
 - [Documento Base de Contratación (DBC): how to read it](https://www.sicoesmonitor.com/blog/documento-base-de-contratacion-dbc-bolivia)
 - [12 mistakes that disqualify tender proposals in Bolivia](https://www.sicoesmonitor.com/blog/errores-que-descalifican-propuestas-licitaciones-bolivia)
 - [Glossary of Bolivian public procurement terms](https://www.sicoesmonitor.com/blog/glosario-contrataciones-estatales-bolivia)
+- [What is ANPE in Bolivia](https://www.sicoesmonitor.com/blog/que-es-anpe-bolivia)
+- [Contratación menor in Bolivia](https://www.sicoesmonitor.com/blog/contratacion-menor-bolivia)
+- [RUPE vs SIGEP: differences](https://www.sicoesmonitor.com/blog/rupe-y-sigep-diferencias-bolivia)
+- [How to apply in SICOES step by step](https://www.sicoesmonitor.com/blog/como-postular-en-sicoes-paso-a-paso)
+- [SICOES personnel calls by city](https://www.sicoesmonitor.com/blog/convocatorias-de-personal-sicoes-por-ciudad)
+- [Tenders in Bolivia by department](https://www.sicoesmonitor.com/blog/licitaciones-bolivia-por-departamento)
+
+Full text of every guide in one file: https://www.sicoesmonitor.com/llms-full.txt — RSS: https://www.sicoesmonitor.com/blog/feed.xml
 
 ## Browse by municipality
 Sacaba, El Alto, Quillacollo, Tiquipaya, Vinto, Viacha, Sucre — https://www.sicoesmonitor.com/licitaciones/municipio/{slug}

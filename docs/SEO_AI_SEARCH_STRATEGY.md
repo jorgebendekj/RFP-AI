@@ -83,3 +83,35 @@ Findable project: "Sicoes Monitor" (note: its default market is US/en — always
 3. **Entity pages** (e.g. Gobierno Autónomo Municipal de X) — infosiscon ranks heavily on these.
 4. Re-run the rank tracker in ~2 weeks (`run_rank_tracker`) and compare to the baseline above; check Search Console for CTR on pos 13–20 terms.
 5. Off-site: Facebook group/page presence (they own the SERP), TikTok/YouTube explainers on RUPE/SICOES.
+
+---
+
+# Update 2026-10-11 — Measurement (Search Console connected) and iteration
+
+## What changed since 2026-10-02 (Search Console, `sc-domain:sicoesmonitor.com`)
+| Metric | Sep 1 – Oct 4 (daily avg) | Oct 5 – 8 (daily avg) |
+|---|---|---|
+| Impressions | ~490 / day | ~3,100 / day (**~6x**) |
+| Clicks | ~5 / day | ~20 / day (**~3-4x**) |
+| Avg position | ~7.7 | ~7.7 (stable) |
+
+- Findable domain overview: 34 → **46** ranking keywords; est. organic traffic 1,047 → 1,095 (the model lags real GSC data).
+- The new guides were indexed within ~3 days and already rank **top 4-7**: DBC pages (pos 4.5, "que es dbc en bolivia" pos 4.4), errores (pos 4.0), modalidades (pos 4.9), requerimiento de personal (pos 6.3).
+- Biggest pages by clicks: `/licitaciones/departamento/la-paz` (75 clicks / 6.1k impr.), santa-cruz (27), `/licitaciones` (17), cochabamba (17), RUPE guide (14), personal guide (14).
+- **Best-converting cluster = personnel queries**: "sicoes requerimiento de personal 2026" CTR 2.8%, "... la paz" 3.5%, "... cochabamba" 4.1%.
+- **Problem: low CTR** on high-impression broad queries ("sicoes" 2,550 impr. → 1 click; "sicoes bolivia" 1,455 → 1; `/blog/que-es-sicoes-bolivia` 4,963 impr. at 0.2% CTR). Causes: titles >60 chars truncated in the SERP (audit: 24 pages), generic descriptions, AI Overviews on top.
+- AI-search proxy (web-search-grounded answers): our pages are cited for "qué es SICOES", "alertas de licitaciones", "cómo registrarse en el RUPE" (via the pillar guide); **not cited** for "qué es ANPE", "RUPE vs SIGEP", "cómo postular en SICOES" → content gaps, now filled.
+- Rank tracker run failed on a Findable billing error (`topup_credits not found`) — GSC used instead.
+
+## Implemented in this iteration
+- `seoTitle` (≤58 chars) for all guides; shorter, intent-matched titles on location pages ("SICOES La Paz: convocatorias vigentes hoy (2026)"); meta descriptions now include the live tender count; template separator `|`.
+- **6 new guides** (2,300–3,570 words): ¿Qué es el ANPE?, Contratación menor, RUPE vs SIGEP, Cómo postular en SICOES, Convocatorias de personal por ciudad (hub for the best-converting cluster), Licitaciones por departamento (hub).
+- AI-search assets: `/llms-full.txt` (all guides as Markdown), RSS `/blog/feed.xml` (+ `<link rel=alternate>`), llms.txt updated.
+- Cross-links from every department/municipio page to the new guides.
+
+## Next
+1. Re-check GSC in 14 days: CTR on `/blog/que-es-sicoes-bolivia`, location pages, and the 6 new guides.
+2. Connect GA4 in Findable to see conversions (login events) by landing page.
+3. Build the live "Requerimiento de Personal" scraper (data-backed city pages) — the highest-converting query cluster; needs testing against sicoes.gob.bo from the GitHub Action environment.
+4. Per-tender detail pages and entity pages (infosiscon's moat).
+5. Off-site mentions (Facebook groups/pages own the SERP for "sicoes").
