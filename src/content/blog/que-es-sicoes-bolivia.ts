@@ -9,7 +9,7 @@ const post: BlogPost = {
   tldr: "El SICOES (Sistema de Contrataciones Estatales de Bolivia) es el portal oficial, sicoes.gob.bo, administrado por el Ministerio de Economía y Finanzas Públicas, donde las entidades públicas publican convocatorias para contratar bienes, obras, servicios y consultorías. Cada proceso tiene un CUCE. Para ofertar se necesita estar registrado en el RUPE y leer el DBC de cada proceso.",
   category: "Fundamentos",
   datePublished: "2026-10-02",
-  dateModified: "2026-10-02",
+  dateModified: "2026-10-29",
   keywords: [
     "SICOES Bolivia",
     "qué es el SICOES",
@@ -256,6 +256,31 @@ const post: BlogPost = {
         {
           type: "p",
           text: "Si prefieres explorar por zona o por tema, puedes empezar por departamentos como [La Paz](/licitaciones/departamento/la-paz), [Santa Cruz](/licitaciones/departamento/santa-cruz) o [Cochabamba](/licitaciones/departamento/cochabamba), o por rubros como [construcción](/licitaciones/categoria/construccion), [tecnología](/licitaciones/categoria/tecnologia) o [consultoría](/licitaciones/categoria/consultoria). Para una comparación de servicios disponibles, lee [herramientas de alertas de licitaciones en Bolivia](/blog/herramientas-de-alertas-de-licitaciones-bolivia), y para un método completo de búsqueda, [cómo encontrar licitaciones en Bolivia](/blog/como-encontrar-licitaciones-en-bolivia).",
+        },
+      ],
+    },
+    {
+      id: "guias-para-cada-paso",
+      heading: "¿Qué guías necesito para cada paso con SICOES?",
+      blocks: [
+        {
+          type: "p",
+          text: "Según lo que quieras hacer en SICOES, estas guías te llevan directo al paso que necesitas. Todas están basadas en documentos y guías oficiales; confirma siempre los datos vigentes en [sicoes.gob.bo](https://www.sicoes.gob.bo).",
+        },
+        {
+          type: "table",
+          caption: "Guías por objetivo",
+          head: ["Quiero…", "Guía"],
+          rows: [
+            ["Registrarme como proveedor", "[Cómo registrarse en el RUPE](/blog/como-registrarse-en-el-rupe-bolivia) y [certificado RUPE: generar, verificar e ingresar](/blog/certificado-rupe-bolivia-generar-verificar-ingresar)"],
+            ["Entender el SIGEP y el cobro", "[RUPE y SIGEP: diferencias](/blog/rupe-y-sigep-diferencias-bolivia) y [registro de beneficiario SIGEP](/blog/registro-beneficiario-sigep-bolivia)"],
+            ["Presentar una propuesta", "[Cómo postular en SICOES paso a paso](/blog/como-postular-en-sicoes-paso-a-paso) y [qué es el DBC](/blog/documento-base-de-contratacion-dbc-bolivia)"],
+            ["Entender las modalidades", "[Modalidades de contratación](/blog/modalidades-de-contratacion-estatal-bolivia), [qué es el ANPE](/blog/que-es-anpe-bolivia) y [contratación menor](/blog/contratacion-menor-bolivia)"],
+            ["Buscar empleo o consultorías", "[Requerimiento de personal 2026](/blog/sicoes-requerimiento-de-personal-2026), [convocatorias de personal por ciudad](/blog/convocatorias-de-personal-sicoes-por-ciudad) y [consultor individual de línea](/blog/consultor-individual-de-linea-bolivia)"],
+            ["Vender productos nacionales", "[Compro Hecho en Bolivia, Mercado Virtual y subasta](/blog/compro-hecho-en-bolivia-mercado-virtual-subasta)"],
+            ["Encontrar y ganar licitaciones", "[Cómo encontrar licitaciones](/blog/como-encontrar-licitaciones-en-bolivia), [licitaciones por departamento](/blog/licitaciones-bolivia-por-departamento) y [cómo ganarlas](/blog/como-ganar-licitaciones-en-bolivia)"],
+            ["Consultar términos", "[Glosario de contrataciones estatales](/blog/glosario-contrataciones-estatales-bolivia)"],
+          ],
         },
       ],
     },

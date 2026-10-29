@@ -6,7 +6,7 @@ import LocationExtras from "@/components/LocationExtras";
 import { buildMunicipalityInfo } from "@/lib/locationInfo";
 import { notFound } from "next/navigation";
 import {
-  getTenders, filterByMunicipality, sortByDate,
+  getTenders, getTendersChecked, filterByMunicipality, sortByDate,
   DEPARTMENTS, CATEGORIES, MUNICIPALITIES,
 } from "@/lib/publicTenders";
 
@@ -24,7 +24,8 @@ export async function generateMetadata(
   const { slug } = await params;
   const dept = MUNICIPALITIES[slug];
   if (!dept) return {};
-  const count = filterByMunicipality(await getTenders(), slug).length;
+  const { ok, tenders } = await getTendersChecked();
+  const count = filterByMunicipality(tenders, slug).length;
   const title = `SICOES ${dept.name}: convocatorias vigentes hoy (2026)`;
   const description = count > 0
     ? `${count} convocatorias SICOES vigentes en ${dept.name}, Bolivia, actualizadas a diario. Entidad, objeto y cierre de cada proceso. Alertas gratis.`
@@ -35,7 +36,7 @@ export async function generateMetadata(
     description,
     alternates: { canonical: url },
     // Thin when nothing matches today: let the page index itself only when it has tenders.
-    robots: count > 0 ? undefined : { index: false, follow: true },
+    robots: ok && count === 0 ? { index: false, follow: true } : undefined,
     openGraph: { title, description, url },
   };
 }

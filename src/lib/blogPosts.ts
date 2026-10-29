@@ -17,13 +17,17 @@ import postular from "@/content/blog/como-postular-en-sicoes-paso-a-paso";
 import personalCiudad from "@/content/blog/convocatorias-de-personal-sicoes-por-ciudad";
 import porDepartamento from "@/content/blog/licitaciones-bolivia-por-departamento";
 import menor from "@/content/blog/contratacion-menor-bolivia";
+import certificadoRupe from "@/content/blog/certificado-rupe-bolivia-generar-verificar-ingresar";
+import sigepBenef from "@/content/blog/registro-beneficiario-sigep-bolivia";
+import consultorLinea from "@/content/blog/consultor-individual-de-linea-bolivia";
+import comproHB from "@/content/blog/compro-hecho-en-bolivia-mercado-virtual-subasta";
 
 export type { BlogPost, BlogSection, Block } from "./blogTypes";
 
 export const BLOG_POSTS: BlogPost[] = [
-  queEsSicoes, rupe, modalidades, anpe, menor, encontrar, ingresar, postular,
-  rupeSigep, personal, personalCiudad, porDepartamento, ganar, dbc, errores,
-  herramientas, glosario,
+  queEsSicoes, rupe, certificadoRupe, modalidades, anpe, menor, encontrar, ingresar,
+  postular, rupeSigep, sigepBenef, personal, personalCiudad, consultorLinea,
+  porDepartamento, comproHB, ganar, dbc, errores, herramientas, glosario,
 ];
 
 export function getPost(slug: string): BlogPost | undefined {

@@ -2,10 +2,10 @@ import type { BlogPost } from "@/lib/blogTypes";
 
 const post: BlogPost = {
   slug: "compro-hecho-en-bolivia-mercado-virtual-subasta",
-  title: "Compro Hecho en Bolivia, Mercado Virtual y Subasta Electrónica en SICOES",
+  title: "Compro Hecho en Bolivia, Mercado Virtual y Subasta en SICOES",
   seoTitle: "Compro Hecho en Bolivia y Mercado Virtual SICOES (2026)",
   description:
-    "Qué son Compro Hecho en Bolivia, el Mercado Virtual y la Subasta Electrónica de SICOES, en qué se diferencian y cómo puede participar un proveedor con RUPE activo.",
+    "Qué son Compro Hecho en Bolivia, el Mercado Virtual y la Subasta Electrónica de SICOES, en qué se diferencian y cómo participa un proveedor con RUPE.",
   tldr:
     "Según las fuentes consultadas, el portal SICOES incluye tres mecanismos: el Mercado Virtual (difusión gratuita de productos de proveedores con RUPE), el catálogo electrónico Compro Hecho en Bolivia (bienes de producción nacional, D.S. 4505) y la Subasta Electrónica (ofertas económicas cada vez más bajas). En todos el proveedor necesita RUPE activo. Verifica la vigencia en sicoes.gob.bo.",
   category: "Estrategia",

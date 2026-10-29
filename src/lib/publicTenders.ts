@@ -66,6 +66,16 @@ export async function getTenders(): Promise<CachedTender[]> {
   }
 }
 
+/** Like getTenders but tells the caller whether the query succeeded (a failure is not "no tenders"). */
+export async function getTendersChecked(): Promise<{ ok: boolean; tenders: CachedTender[] }> {
+  try {
+    const res = await adminDb.query({ siceosTenders: {} });
+    return { ok: true, tenders: (res.siceosTenders as unknown as CachedTender[]) || [] };
+  } catch {
+    return { ok: false, tenders: [] };
+  }
+}
+
 // ─── Filtering ────────────────────────────────────────────────────────────────
 
 function normalize(s: string): string {
