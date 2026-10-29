@@ -39,34 +39,6 @@ const DEFAULT_KEYWORDS = [
   "consultoria", "auditoria", "asesoria", "estudio",
 ];
 
-/**
- * Place names. The portal's search box matches the contract OBJECT text, which often
- * names the municipality or city ("... en el municipio de Sacaba"). These feed the
- * public department / municipality pages (/licitaciones/departamento|municipio/*).
- */
-const LOCATION_KEYWORDS = [
-  "la paz", "el alto", "santa cruz", "cochabamba", "oruro", "potosi", "tarija",
-  "sucre", "chuquisaca", "beni", "trinidad", "pando", "cobija",
-  "sacaba", "quillacollo", "tiquipaya", "vinto", "viacha", "colcapirhua", "sipe sipe",
-  "achocalla", "warnes", "montero", "yacuiba", "llallagua", "villazon", "riberalta",
-  "guayaramerin", "yapacani", "villa tunari", "sorata", "huanuni",
-];
-
-/** Common procurement object words — widens coverage beyond the sector presets. */
-const EXTRA_KEYWORDS = [
-  "provision", "adquisicion", "suministro", "contratacion de servicio", "servicio de",
-  "mantenimiento", "reparacion", "refaccion", "construccion de", "mejoramiento",
-  "equipamiento", "material", "insumos", "alimentos", "refrigerio", "limpieza",
-  "seguridad", "repuestos", "mobiliario", "computadora", "impresora", "licencia",
-  "auditoria", "supervision", "diseno", "capacitacion", "publicidad", "alquiler",
-  "arrendamiento", "seguro", "medicamentos", "reactivos", "uniformes", "papel",
-  "agua potable", "alcantarillado", "riego", "puente", "camino", "pavimento",
-  "escuela", "unidad educativa", "centro de salud", "hospital", "ambulancia",
-  "tractor", "maquinaria", "excavadora", "volqueta", "camioneta", "combustible",
-  "internet", "fibra optica", "camaras", "servidor", "sistema", "plataforma",
-  "consultor", "consultoria", "estudio", "asistencia tecnica", "evaluacion",
-];
-
 interface RawTender {
   cuce: string;
   entidad: string;
@@ -79,8 +51,6 @@ interface RawTender {
   url: string;
   form100Url?: string;
 }
-
-const SEARCH_BUDGET_MS = 22 * 60 * 1000;
 
 const ADMIN_TOKEN = process.env.INSTANTDB_ADMIN_TOKEN;
 if (!ADMIN_TOKEN) {
@@ -204,10 +174,6 @@ async function getAllKeywords(): Promise<string[]> {
   } catch (e) {
     console.warn("[scraper] Could not load user keywords, using defaults only:", e);
   }
-  // Priority order matters because the run has a time budget: user + sector keywords first,
-  // then place names (feed the location pages), then the broad procurement vocabulary.
-  for (const k of LOCATION_KEYWORDS) set.add(k);
-  for (const k of EXTRA_KEYWORDS) set.add(k);
   return Array.from(set);
 }
 
@@ -340,28 +306,7 @@ async function main() {
     console.log("[scraper] Waiting 5s for initial AJAX...");
     await page.waitForTimeout(5000);
 
-    // The page's initial AJAX listing (latest tenders, no keyword) is already on screen: keep it.
-    try {
-      const initial = parseSICOESTable(await page.content());
-      let initialAdded = 0;
-      for (const t of initial) {
-        if (!isVigente(t.estado) || allTenders.has(t.cuce)) continue;
-        allTenders.set(t.cuce, t);
-        initialAdded++;
-      }
-      console.log(`[scraper] Initial listing → ${initial.length} rows, +${initialAdded} new`);
-    } catch (e) {
-      console.warn("[scraper] Could not parse initial listing:", e instanceof Error ? e.message : e);
-    }
-
-    // Stop starting new keywords after this budget so the DB write below always runs
-    // (the workflow is cancelled at 30 min; a cancelled run would leave the cache stale).
-    const deadline = t0 + SEARCH_BUDGET_MS;
     for (const keyword of keywords) {
-      if (Date.now() > deadline) {
-        console.warn(`[scraper] Time budget reached — skipping remaining keywords from "${keyword}" on`);
-        break;
-      }
       try {
         const tenders = await searchKeyword(page, keyword);
         let added = 0;

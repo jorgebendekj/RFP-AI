@@ -35,7 +35,7 @@ export default function BlogIndex() {
   };
   const [featured, ...rest] = BLOG_POSTS;
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
+    <div className="public-site" style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <nav style={{ borderBottom: "1px solid var(--border)", padding: "0 24px", height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between", maxWidth: "1100px", margin: "0 auto" }}>
         <Link href="/" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 700, letterSpacing: "0.08em" }}>SICOES MONITOR</Link>

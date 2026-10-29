@@ -10,7 +10,7 @@
   --accent: #00E5C3;
   --accent2: #0077FF;
   --text: #E0EAF4;
-  --muted: #8196AA;
+  --muted: #4A6075;
   --danger: #FF4D6D;
   --warning: #FFB547;
   --success: #00D68F;
@@ -236,3 +236,7 @@ body {
 .callout-warn { background: rgba(255,184,0,0.08); border-color: rgba(255,184,0,0.4); }
 .toc a { color: #C9D6E3; text-decoration: none; }
 .toc a:hover { color: var(--accent); }
+
+/* Lighter secondary text for the public marketing pages only (home, /licitaciones, /blog).
+   The app (dashboard, admin, login) keeps the original --muted from :root. */
+.public-site { --muted: #8196AA; }

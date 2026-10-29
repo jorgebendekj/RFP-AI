@@ -104,7 +104,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
   const lds = [articleLd, faqLd, crumbLd, ...(howToLd ? [howToLd] : [])];
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
+    <div className="public-site" style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
       {lds.map((ld, i) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       ))}

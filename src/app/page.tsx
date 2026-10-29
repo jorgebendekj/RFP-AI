@@ -63,7 +63,7 @@ const faqJsonLd = {
 
 export default function LandingPage() {
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
+    <div className="public-site" style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
