@@ -5,7 +5,7 @@ const post: BlogPost = {
   title: "Licitaciones en Bolivia por departamento: dónde y cómo buscar",
   seoTitle: "Licitaciones en Bolivia por departamento (2026)",
   description:
-    "Guía de licitaciones en Bolivia por departamento: La Paz, Santa Cruz, Cochabamba, Oruro, Potosí, Tarija, Chuquisaca, Beni y Pando. Entidades, rubros y cómo buscar.",
+    "Licitaciones en Bolivia por departamento: La Paz, Santa Cruz, Cochabamba, Oruro, Potosí, Tarija, Chuquisaca, Beni y Pando. Entidades y cómo buscar.",
   tldr:
     "Las licitaciones y convocatorias del Estado boliviano se publican en SICOES (sicoes.gob.bo) y se pueden ordenar por departamento según la entidad convocante: gobernaciones, gobiernos autónomos municipales, universidades, empresas públicas y servicios de salud. Esta guía recorre los nueve departamentos, cómo compararlos y cómo combinar alertas, siempre verificando en el DBC.",
   category: "Estrategia",

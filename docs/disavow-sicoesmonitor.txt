@@ -1,0 +1,48 @@
+# Optional disavow file for sicoesmonitor.com — generated 2026-10-29 from Findable backlink data.
+# All 43 backlinks found are automated link-selling / PBN spam (anchors such as
+# "Powerful Tiered Link Building for sicoesmonitor.com ...", casino/poker footprints, spam score 60-75).
+# Google usually ignores such links; uploading this file is a low-cost precaution.
+# Upload at: https://search.google.com/search-console/disavow-links (select property sicoesmonitor.com)
+domain:seopxl-ranking-boost-lab.shop
+domain:seopxl-organic-boost-lab.shop
+domain:789taya.online
+domain:poker-manila.com
+domain:thcradar.com
+domain:sisusan88ax.shop
+domain:dbike-us.com
+domain:clinto.shop
+domain:clifflisting.com
+domain:techbumppy.com
+domain:bureatag.com
+domain:seorankkeywordly.site
+domain:bomcaminho.com
+domain:sahammurah.com
+domain:totoonepick.com
+domain:seonix.agency
+domain:rank-seo-now.shop
+domain:archive-hu.com
+domain:minvio.shop
+domain:bestnz-poker-casinoslot.com
+domain:juvex.shop
+domain:dupurgeniefr.com
+domain:seocodeminty.site
+domain:burpio.shop
+domain:elitesmm.shop
+domain:kernelpanicpodcast.com
+domain:browardmac.shop
+domain:thedocmag.com
+domain:top5casino.online
+domain:cvillico.com
+domain:bramo.shop
+domain:onvaxs.com
+domain:ninko.shop
+domain:realwinningonlinecasino.online
+domain:bestonlinecasinomexico.online
+domain:fashionclothingnews.com
+domain:quotesblom.com
+domain:uncledspizza.com
+domain:theforbestimes.com
+domain:betwinnermirror.com
+domain:betulcrime.com
+domain:homesforsaleoldgreenwichct.com
+domain:ggmap.us.com

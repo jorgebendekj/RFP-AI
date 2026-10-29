@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import SiteFooter from "@/components/SiteFooter";
+import TendersTable from "@/components/TendersTable";
+import LocationExtras from "@/components/LocationExtras";
+import { buildMunicipalityInfo } from "@/lib/locationInfo";
 import { notFound } from "next/navigation";
 import {
   getTenders, filterByMunicipality, sortByDate,
@@ -24,13 +27,15 @@ export async function generateMetadata(
   const count = filterByMunicipality(await getTenders(), slug).length;
   const title = `SICOES ${dept.name}: convocatorias vigentes hoy (2026)`;
   const description = count > 0
-    ? `${count} convocatorias SICOES vigentes en ${dept.name}, Bolivia, actualizadas a diario. Entidad, objeto y fecha de cierre de cada proceso. Alertas gratis por email.`
+    ? `${count} convocatorias SICOES vigentes en ${dept.name}, Bolivia, actualizadas a diario. Entidad, objeto y cierre de cada proceso. Alertas gratis.`
     : `Convocatorias y licitaciones SICOES en ${dept.name}, Bolivia. Datos de sicoes.gob.bo cada día. Alertas gratis por email.`;
   const url = `${siteUrl}/licitaciones/municipio/${slug}`;
   return {
     title: { absolute: title },
     description,
     alternates: { canonical: url },
+    // Thin when nothing matches today: let the page index itself only when it has tenders.
+    robots: count > 0 ? undefined : { index: false, follow: true },
     openGraph: { title, description, url },
   };
 }
@@ -132,64 +137,7 @@ export default async function DepartamentoPage(
             Convocatorias vigentes en {dept.name} — SICOES 2026
           </h2>
 
-          {filtered.length === 0 ? (
-            <div className="card" style={{ padding: "40px", textAlign: "center" }}>
-              <p style={{ color: "var(--muted)", marginBottom: "12px" }}>
-                No se encontraron licitaciones vigentes para {dept.name} en este momento.
-              </p>
-              <p style={{ color: "var(--muted)", fontSize: "0.875rem" }}>
-                El sistema actualiza los datos cada mañana desde sicoes.gob.bo.{" "}
-                <Link href="/licitaciones" style={{ color: "var(--accent)" }}>Ver todas las licitaciones de Bolivia →</Link>
-              </p>
-            </div>
-          ) : (
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8125rem" }}>
-                <thead>
-                  <tr style={{ borderBottom: "1px solid var(--border)", color: "var(--muted)", textAlign: "left" }}>
-                    <th style={{ padding: "10px 12px", fontWeight: 600, letterSpacing: "0.05em", fontSize: "0.75rem" }}>CUCE</th>
-                    <th style={{ padding: "10px 12px", fontWeight: 600, letterSpacing: "0.05em", fontSize: "0.75rem" }}>OBJETO / ENTIDAD</th>
-                    <th style={{ padding: "10px 12px", fontWeight: 600, letterSpacing: "0.05em", fontSize: "0.75rem" }}>TIPO</th>
-                    <th style={{ padding: "10px 12px", fontWeight: 600, letterSpacing: "0.05em", fontSize: "0.75rem" }}>CIERRE</th>
-                    <th style={{ padding: "10px 12px" }}></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.map((t) => (
-                    <tr key={t.id} style={{ borderBottom: "1px solid var(--border)" }}>
-                      <td style={{ padding: "12px", color: "var(--accent)", fontWeight: 600, whiteSpace: "nowrap" }}>
-                        {t.cuce}
-                      </td>
-                      <td style={{ padding: "12px", maxWidth: "420px" }}>
-                        <div style={{ color: "var(--text)", marginBottom: "4px", lineHeight: 1.4 }}>{t.objeto}</div>
-                        <div style={{ color: "var(--muted)", fontSize: "0.75rem" }}>{t.entidad}</div>
-                      </td>
-                      <td style={{ padding: "12px", color: "var(--muted)", whiteSpace: "nowrap" }}>
-                        {t.tipoContratacion}
-                      </td>
-                      <td style={{ padding: "12px", color: "var(--muted)", whiteSpace: "nowrap" }}>
-                        {t.fechaPresentacion}
-                      </td>
-                      <td style={{ padding: "12px" }}>
-                        <a
-                          href={t.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            color: "var(--accent)", border: "1px solid var(--accent)",
-                            borderRadius: "4px", padding: "5px 10px", textDecoration: "none",
-                            fontSize: "0.75rem", whiteSpace: "nowrap",
-                          }}
-                        >
-                          Ver en SICOES →
-                        </a>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+          <TendersTable rows={filtered} fallback={sortByDate(allTenders).slice(0, 8)} placeName={dept.name} />
         </section>
 
         {/* ── Other departments ───────────────────────────────────── */}
@@ -265,27 +213,11 @@ export default async function DepartamentoPage(
       </div>
 
       {/* ── Footer ──────────────────────────────────────────────────────── */}
-      <section aria-labelledby="info-heading" style={{ maxWidth: "1100px", margin: "0 auto 56px", padding: "0 24px" }}>
-        <div className="card" style={{ padding: "28px 32px" }}>
-          <h2 id="info-heading" style={{ fontSize: "1.0625rem", fontWeight: 700, marginBottom: "12px" }}>
-            Cómo participar en las contrataciones públicas de {dept.name}
-          </h2>
-          <p style={{ color: "var(--muted)", fontSize: "0.875rem", lineHeight: 1.8, marginBottom: "12px" }}>
-            Los gobiernos municipales, gobernaciones, universidades y empresas estatales de {dept.name} publican sus
-            convocatorias en SICOES (sicoes.gob.bo). Para presentar una propuesta necesitas estar inscrito en el RUPE.
-            Revisa el documento base de contratación de cada proceso y respeta los plazos de presentación.
-          </p>
-          <p style={{ color: "var(--muted)", fontSize: "0.875rem", lineHeight: 1.8, margin: 0 }}>
-            Guías útiles:{" "}
-            <Link href="/blog/que-es-sicoes-bolivia" style={{ color: "var(--accent)" }}>qué es SICOES</Link>,{" "}
-            <Link href="/blog/como-registrarse-en-el-rupe-bolivia" style={{ color: "var(--accent)" }}>cómo registrarse en el RUPE</Link>,{" "}
-            <Link href="/blog/modalidades-de-contratacion-estatal-bolivia" style={{ color: "var(--accent)" }}>modalidades ANPE y Licitación Pública</Link> y{" "}
-            <Link href="/blog/convocatorias-de-personal-sicoes-por-ciudad" style={{ color: "var(--accent)" }}>convocatorias de personal por ciudad</Link>,{" "}
-            <Link href="/blog/que-es-anpe-bolivia" style={{ color: "var(--accent)" }}>qué es el ANPE</Link> y{" "}
-            <Link href="/blog/licitaciones-bolivia-por-departamento" style={{ color: "var(--accent)" }}>licitaciones por departamento</Link>.
-          </p>
-        </div>
-      </section>
+      <LocationExtras
+        name={dept.name}
+        info={buildMunicipalityInfo(slug, dept.name)}
+        url={`${siteUrl}/licitaciones/municipio/${slug}`}
+      />
 
       <SiteFooter />
     </div>

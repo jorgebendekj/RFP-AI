@@ -24,7 +24,7 @@ export async function generateMetadata(
   const count = filterByCategory(await getTenders(), slug).length;
   const title = `Licitaciones de ${cat.name} en Bolivia (2026)`;
   const description = count > 0
-    ? `${count} convocatorias SICOES vigentes de ${cat.name} en Bolivia, actualizadas a diario. Entidad, objeto y fecha de cierre de cada proceso. Alertas gratis por email.`
+    ? `${count} convocatorias SICOES vigentes de ${cat.name} en Bolivia, actualizadas a diario. Entidad, objeto y cierre de cada proceso. Alertas gratis.`
     : `Convocatorias y licitaciones SICOES de ${cat.name} en Bolivia. Datos de sicoes.gob.bo cada día. Alertas gratis por email.`;
   const url = `${siteUrl}/licitaciones/categoria/${slug}`;
   return {

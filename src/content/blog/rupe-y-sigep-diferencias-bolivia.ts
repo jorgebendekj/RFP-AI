@@ -5,7 +5,7 @@ const post: BlogPost = {
   title: "RUPE y SIGEP: diferencias y cuál necesitas para contratar con el Estado",
   seoTitle: "RUPE y SIGEP: diferencias y cuál necesitas (2026)",
   description:
-    "RUPE y SIGEP no son lo mismo: el RUPE te habilita como proveedor y el Registro de Beneficiario SIGEP sirve para cobrar. Diferencias, orden de trámites y errores.",
+    "RUPE y SIGEP no son lo mismo: el RUPE te habilita como proveedor y el SIGEP sirve para cobrar. Diferencias, orden de trámites y errores.",
   tldr:
     "El RUPE (Registro Único de Proveedores del Estado) habilita a un proveedor para contratar con el Estado y se accede desde sicoes.gob.bo. El Registro de Beneficiario del SIGEP (Sistema de Gestión Pública) sirve para recibir pagos del Estado en Bolivia. Son registros distintos, y algunas convocatorias, sobre todo de consultoría individual, piden ambos. Confirma siempre en el DBC.",
   category: "Registro y trámites",
